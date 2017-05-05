@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <title>Who Am I?</title>
+    </head>
+    <body>
+        <h1 th:text="'Username: ' + ${username}"></h1>
+        <h2 th:text="'Full name: ' + ${fullName}"></h2>
+        <h2 th:text="'Office ID: ' + ${officeId}"></h2>
+        
+        <h2>Roles</h2>
+        <ul th:each="role: ${roles}">
+        <li th:text="${role}"></li>
+        </ul>
+        <form th:action="@{/logout}" method="post">
+            <input type="submit" value="Sign Out"/>
+        </form>
+    </body>
+</html>
