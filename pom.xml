@@ -9,6 +9,7 @@
     </parent>
     <artifactId>odk-hamsterball-java</artifactId>
     <name>Open Data Kit HamsterBall GUI</name>
+    <version>1.0.0-SNAPSHOT</version>
     <description>Client for Open Data Kit Hamster using Java + Spring Boot</description>
     <url>http://benetech.org/</url>
     <organization>
