@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{menulayout}">
+<th:block layout:fragment="title" th:text="'File Manifest for ' + ${tableId}"></th:block>
+<body>
+	<section layout:fragment="content">
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Filename</th>
+					<th>Content Length</th>
+					<th>Content Type</th>
+					<th>MD5 Hash</th>
+					<th>Download URL</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th>Filename</th>
+					<th>Content Length</th>
+					<th>Content Type</th>
+					<th>MD5 Hash</th>
+					<th>Download URL</th>
+				</tr>
+			</tfoot>
+			<tbody th:each="file: ${manifest.files}">
+				<tr>
+					<td th:text="${file.filename}"></td>
+					<td th:text="${file.contentLength}"></td>
+					<td th:text="${file.contentType}"></td>
+					<td th:text="${file.md5hash}"></td>
+					<td th:text="${file.downloadUrl}"></td>
+				</tr>
+			</tbody>
+		</table>
+		
+	</section>
+</body>
+</html>

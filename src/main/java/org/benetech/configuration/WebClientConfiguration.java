@@ -19,10 +19,10 @@ public class WebClientConfiguration {
   @Value("${odk.realm}")
   String odkRealm;
   
-  @Value("${odk.app.id:default}")
+  @Value("${odk.app.id:'default'}")
   String odkAppId;
   
-  @Value("${odk.client.version:2")
+  @Value("${odk.client.version:2}")
   String odkClientVersion;
   
   @Bean(name = "webServicesProperties")

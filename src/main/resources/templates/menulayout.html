@@ -56,7 +56,8 @@
 							<li role="separator" class="divider"></li>
 							<li class="dropdown-header">Existing Form Tables</li>
 							<th:block th:each="tableId: ${tableIds}">
-								<li><a th:text="${tableId}"  th:href="@{|/tables/${tableId}|}" ></a></li>
+								<li><a th:text="${tableId}"
+									th:href="@{|/tables/manifest/${tableId}|}"></a></li>
 							</th:block>
 						</ul></li>
 
@@ -67,6 +68,11 @@
 							value="Sign Out" />
 					</form>
 				</div>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#">Logged in as <span th:text="${currentUser.fullName}">Javier
+							Cáceres</span></a></li>
+				</ul>
+
 			</div>
 			<!--/.nav-collapse -->
 		</div>

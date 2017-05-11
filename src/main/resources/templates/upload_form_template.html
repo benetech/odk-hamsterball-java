@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{menulayout}">
+
+<th:block layout:fragment="title">Upload a new Form Template</th:block>
+<body>
+	<section layout:fragment="content">
+		<p>The file you upload here will become a new form template for
+			data collection.</p>
+		<div th:if="${msg != null}"
+			th:class="'alert alert-' + ${css} + ' alert-dismissible'"
+			role="alert">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">×</span>
+			</button>
+			<strong th:text="${msg}"></strong>
+			<p th:if="${result != null}">Files uploaded:
+			<ul th:each="file: ${result.getManifest.files}">
+				<li th:text="${file.filename}">File</li>
+			</ul></p>
+			<p th:if="${result != null and result.notProcessedFiles != null}">Files not uploaded
+			<ul th:each="filename: ${result.notProcessedFiles}">
+				<li th:text="${filename}">File</li>
+			</ul></p>
+		</div>
+
+		<form th:action="@{/tables/upload}" method="post"
+			class="form-horizontal" enctype="multipart/form-data" encoding="multipart/form-data" accept-charset="UTF-8">
+			<fieldset class="form-group">
+				<legend>Zip File</legend>
+				<label class="btn btn-default btn-file"> Select a ZIP
+					file... <input type="file" name="zipFile" id="zipFile"
+					class="display-none">
+				</label>
+			</fieldset>
+
+			<fieldset class="form-group">
+				<legend>Office</legend>
+				<div class="form-check" th:each="office: ${offices}">
+					<div class="checkbox">
+						<label class="form-check-label"> <input type="checkbox"
+							name="officeId" class="form-check-input"
+							th:value="${office.officeId}"><span
+							th:text="${office.name} + ' (' + ${office.officeId} + ')'"></span>
+						</label>
+					</div>
+				</div>
+			</fieldset>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<input class="btn btn-default" type="submit"
+						value="Upload Zipped Form"></input>
+				</div>
+			</div>
+
+		</form>
+	</section>
+</body>
+</html>

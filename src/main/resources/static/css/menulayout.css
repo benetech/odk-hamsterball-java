@@ -10,6 +10,10 @@ a {
 	background-color: white;
 }
 
+#file.display-none {
+	display: none;
+}
+
 .navbar-static-top {
 	margin-bottom: 19px;
 }

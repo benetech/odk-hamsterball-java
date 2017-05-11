@@ -11,6 +11,7 @@ import org.benetech.client.OdkClient;
 import org.benetech.client.OdkClientFactory;
 import org.benetech.constants.GeneralConsts;
 import org.benetech.util.OdkClientUtils;
+import org.opendatakit.api.users.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +36,9 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
       OdkClient odkClient = odkClientFactory.getOdkClient();
       List<String> tableIds = odkClient.getTableIds();
       modelAndView.getModelMap().addAttribute("tableIds", tableIds);
+      UserEntity user = odkClient.getCurrentUser();
+      modelAndView.getModelMap().addAttribute("currentUser", user);
+
     }
   }
 
