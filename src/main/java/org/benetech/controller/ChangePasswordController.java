@@ -3,9 +3,8 @@ package org.benetech.controller;
 import org.benetech.client.OdkClient;
 import org.benetech.client.OdkClientFactory;
 import org.benetech.model.form.ChangePasswordForm;
-import org.benetech.security.WebServiceDelegatingAuthenticationProvider;
-import org.opendatakit.api.users.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +21,7 @@ public class ChangePasswordController {
 	OdkClientFactory odkClientFactory;
 
 	@Autowired
-	WebServiceDelegatingAuthenticationProvider authenticationProvider;
+	AuthenticationProvider authenticationProvider;
 
 	@GetMapping("/password")
 	public String passwordForm(Model model) {

@@ -32,10 +32,11 @@
 			class="form-horizontal" enctype="multipart/form-data" encoding="multipart/form-data" accept-charset="UTF-8">
 			<fieldset class="form-group">
 				<legend>Zip File</legend>
-				<label class="btn btn-default btn-file"> Select a ZIP
-					file... <input type="file" name="zipFile" id="zipFile"
-					class="display-none">
-				</label>
+				<div class="fileinput fileinput-new" data-provides="fileinput">
+					<span class="btn btn-default btn-file"><span>Select a ZIP
+					file... </span><input type="file"  name="zipFile" /></span> <span class="fileinput-filename"></span><span
+						class="fileinput-new">No file chosen</span>
+				</div>
 			</fieldset>
 
 			<fieldset class="form-group">
