@@ -1,0 +1,38 @@
+body {
+	min-height: 2000px;
+}
+
+a {
+	color: #001f51;
+}
+
+.container {
+	background-color: white;
+}
+
+.navbar-static-top {
+	margin-bottom: 19px;
+}
+
+.page-header {
+	color: #254d7c;
+	border-bottom: none;
+}
+
+.jumbotron {
+	margin-top: 30px;
+	background-color: white;
+}
+
+h1 {
+	color: #254d7c;
+	font-family: 'Holtwood One SC';
+}
+
+#odk-menu-icon {
+	margin-top: -6px;
+}
+
+#odk-sign-out {
+	margin-top: 8px;
+}

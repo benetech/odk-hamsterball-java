@@ -11,13 +11,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OdkClientFactory {
-  
+
   @Autowired
-  Properties webServicesProperties; 
+  Properties webServicesProperties;
 
   public OdkClient getOdkClient() {
     String odkUrlString = webServicesProperties.getProperty("odk.url");
-    
+    String odkAppId = webServicesProperties.getProperty("odk.app.id");
+    String odkClientVersion = webServicesProperties.getProperty("odk.client.version");
+
+
     URL odkUrl = null;
     if (odkUrlString == null) {
       throw new InternalAuthenticationServiceException(
@@ -29,10 +32,10 @@ public class OdkClientFactory {
       throw new InternalAuthenticationServiceException(
           "Bad host syntax.  Did you configure the web service host?");
     }
-    
-    return new OdkClient(OdkClientUtils.getRestTemplate(), odkUrl );
+
+    return new OdkClient(OdkClientUtils.getRestTemplate(), odkUrl, odkAppId, odkClientVersion);
   }
 
-  
+
 
 }

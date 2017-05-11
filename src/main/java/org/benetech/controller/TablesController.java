@@ -10,16 +10,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class WhoAmIController {
+public class TablesController {
   
   @Autowired
   OdkClientFactory odkClientFactory;
 
-  @RequestMapping("/whoami")
-  public String whoami(Model model, Authentication authentication) {
+  @RequestMapping("/tables")
+  public String tables(Model model) {
     
-      model.addAttribute("username", authentication.getName());
-      model.addAttribute("roles", authentication.getAuthorities());
+
       OdkClient odkClient = odkClientFactory.getOdkClient();
       UserEntity user = odkClient.getCurrentUser();
       model.addAttribute("officeId", user.getOfficeId());

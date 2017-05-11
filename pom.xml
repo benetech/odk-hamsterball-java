@@ -18,7 +18,9 @@
     </organization>
     <properties>
         <java.version>1.8</java.version>
+        <thymeleaf.version>3.0.6.RELEASE</thymeleaf.version>
 
+        <thymeleaf-layout-dialect.version>2.2.1</thymeleaf-layout-dialect.version>
     </properties>
     <repositories>
         <!-- We're using jitpack to download odk-tables-api-hamster -->

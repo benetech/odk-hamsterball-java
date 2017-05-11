@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{menulayout}">
+   <th:block layout:fragment="title">Users and Permissions</th:block>
+<body>
+	<section layout:fragment="content">
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Full Name</th>
+					<th>User ID</th>
+					<th>Office</th>
+					<th:block th:each="role: ${roles}">
+						<th th:text="${role.name}" th:attr="title=${role.description}"></th>
+					</th:block>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th>Full Name</th>
+					<th>User ID</th>
+					<th>Office</th>
+					<th:block th:each="role: ${roles}">
+						<th th:text="${role.name}" th:attr="title=${role.description}"></th>
+					</th:block>
+				</tr>
+			</tfoot>
+			<tbody th:each="user: ${users}">
+				<tr>
+					<td th:text="${user.fullName}">Fred User</td>
+					<td th:text="${user.userId}">username:fred</td>
+					<td th:text="${offices[user.officeId] != null} ? ${offices[user.officeId].name + ' (' + user.officeId + ')'}">Madison, Wisconsin (madison)</td>
+					<th:block th:each="role: ${roles}">
+						<td th:text="${#lists.contains(user.roles, role.role)} ? 'yes'"></td>
+					</th:block>
+				</tr>
+			</tbody>
+		</table>
+
+	</section>
+</body>
+</html>
