@@ -29,7 +29,8 @@
 			</tfoot>
 			<tbody th:each="file: ${manifest.files}">
 				<tr>
-					<td th:text="${file.filename}"></td>
+					<td><a th:text="${file.filename}"
+									th:href="@{|/file/${file.filename}|}"></a></td>
 					<td th:text="${file.contentLength}"></td>
 					<td th:text="${file.contentType}"></td>
 					<td th:text="${file.md5hash}"></td>

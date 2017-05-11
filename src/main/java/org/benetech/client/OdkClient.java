@@ -1,10 +1,12 @@
 package org.benetech.client;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.benetech.constants.GeneralConsts;
@@ -17,6 +19,7 @@ import org.opendatakit.api.users.entity.RoleDescription;
 import org.opendatakit.api.users.entity.UserEntity;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -45,6 +48,8 @@ public class OdkClient {
 
 	public static String TABLES_ENDPOINT = "/odktables/{appId}/tables";
 	public static String TABLE_MANIFEST_ENDPOINT = "/odktables/{appId}/manifest/{odkClientVersion}/{tableId}";
+	
+	public static String TABLE_FILE_PROXY_ENDPOINT = "/odktables/{appId}/files/{odkClientVersion}";
 
 	private RestTemplate restTemplate;
 	private URL odkUrl;
@@ -58,6 +63,16 @@ public class OdkClient {
 		this.odkClientVersion = odkClientVersion;
 	}
 
+	public String getFileProxyEndpoint() {
+	     return odkUrl.toExternalForm() + (TABLE_FILE_PROXY_ENDPOINT.replace("{appId}", odkAppId)
+             .replace("{odkClientVersion}", odkClientVersion));
+	}
+	
+	public String getFormUploadEndpoint() {
+         return odkUrl.toExternalForm() + (FORM_UPLOAD_ENDPOINT.replace("{appId}", odkAppId)
+             .replace("{odkClientVersion}", odkClientVersion));
+    }
+	
 	public UserEntity getCurrentUser() {
 		String getUserUrl = odkUrl.toExternalForm() + USER_CURRENT_ENDPOINT;
 		ResponseEntity<UserEntity> getResponse = restTemplate.exchange(getUserUrl, HttpMethod.GET, null,
@@ -110,9 +125,7 @@ public class OdkClient {
 		for (TableResource table : tables.getTables()) {
 			tableIds.add(table.getTableId());
 		}
-
 		return tableIds;
-
 	}
 
 	public OdkTablesFileManifest getTableManifest(String tableId) {
@@ -130,12 +143,31 @@ public class OdkClient {
 
 	}
 	
+	/**
+	 * Upload a file, which is sent to the ODK Server
+	 * @param file
+	 * @param offices
+	 * @return
+	 * @throws IOException
+	 * File needs to be converted to FileSystemResource before transmission.
+	 * @see http://stackoverflow.com/questions/41632647/multipart-file-upload-with-spring-resttemplate-and-jackson
+	 */
 	public FormUploadResult uploadFile(MultipartFile file, List<String> offices) throws IOException {
 		String postUploadUrl = odkUrl.toExternalForm() + (FORM_UPLOAD_ENDPOINT.replace("{appId}", odkAppId)
 				.replace("{odkClientVersion}", odkClientVersion));
 
+		File tempFile = null;
+	    try {
+	        String extension = "." +  FilenameUtils.getExtension(file.getOriginalFilename());
+	        tempFile = File.createTempFile("temp", extension);
+	        file.transferTo(tempFile);
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	    
 		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
-		parts.add(GeneralConsts.ZIP_FILE, new ByteArrayResource(file.getBytes()));
+		
+		parts.add(GeneralConsts.ZIP_FILE, new FileSystemResource(tempFile));
 		for (String office: offices) {
 			parts.add(GeneralConsts.OFFICE_ID, office);
 		}

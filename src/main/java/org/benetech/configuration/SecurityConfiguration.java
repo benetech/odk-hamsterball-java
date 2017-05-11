@@ -20,20 +20,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Autowired
   private WebClientConfiguration webClientConfiguration;
-  
+
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-      http
-          .authorizeRequests()
-              // .antMatchers("/" ).permitAll() // For landing page
-              .anyRequest().authenticated()
-              .and()
-          .formLogin()
-              .loginPage("/login").failureUrl("/login?error")
-              .permitAll()
-              .and()
-          .logout()
-              .permitAll();
+    http.csrf().ignoringAntMatchers("/file/**");
+
+    http.authorizeRequests()
+        // .antMatchers("/" ).permitAll() // For landing page
+        .anyRequest().authenticated().and().formLogin().loginPage("/login")
+        .failureUrl("/login?error").permitAll().and().logout().permitAll();
   }
 
   @Autowired

@@ -3,6 +3,11 @@ package org.benetech.controller;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.benetech.client.OdkClient;
 import org.benetech.client.OdkClientFactory;
 import org.opendatakit.aggregate.odktables.rest.entity.OdkTablesFileManifest;
@@ -21,49 +26,54 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class TablesController {
 
-	@Autowired
-	OdkClientFactory odkClientFactory;
+  @Autowired
+  OdkClientFactory odkClientFactory;
 
-	@RequestMapping("/tables/manifest/{tableId}")
-	public String tables(@PathVariable("tableId") String tableId, Model model) {
+  private static Log logger = LogFactory.getLog(TablesController.class);
 
-		OdkClient odkClient = odkClientFactory.getOdkClient();
-		OdkTablesFileManifest manifest = odkClient.getTableManifest(tableId);
-		model.addAttribute("manifest", manifest);
-		model.addAttribute("tableId", tableId);
-		return "manifest";
-	}
 
-	@GetMapping("/tables/upload")
-	public String uploadForm(Model model) {
+  @RequestMapping("/tables/manifest/{tableId}")
+  public String tables(@PathVariable("tableId") String tableId, Model model) {
 
-		OdkClient odkClient = odkClientFactory.getOdkClient();
-		List<RegionalOffice> offices = odkClient.getOfficeList();
-		model.addAttribute("offices", offices);
-		return "upload_form_template";
-	}
+    OdkClient odkClient = odkClientFactory.getOdkClient();
+    OdkTablesFileManifest manifest = odkClient.getTableManifest(tableId);
+    model.addAttribute("manifest", manifest);
+    model.addAttribute("tableId", tableId);
+    return "manifest";
+  }
 
-	@PostMapping("/tables/upload")
-	public String uploadSubmit(@RequestParam("zipFile") MultipartFile file, @RequestParam("officeId") List<String> offices,
-			Model model) {
+  @GetMapping("/tables/upload")
+  public String uploadForm(Model model) {
 
-		OdkClient odkClient = odkClientFactory.getOdkClient();
-		FormUploadResult result;
-		try {
-			result = odkClient.uploadFile(file, offices);
-			model.addAttribute("result", result);
-			model.addAttribute("msg", "File uploaded.");
-			model.addAttribute("css", "success");
-		} catch (IOException e) {
-			model.addAttribute("msg", "Upload failed.");
-			model.addAttribute("css", "danger");
+    OdkClient odkClient = odkClientFactory.getOdkClient();
+    List<RegionalOffice> offices = odkClient.getOfficeList();
+    model.addAttribute("offices", offices);
+    return "upload_form_template";
+  }
 
-		}
-		List<RegionalOffice> menuOffices = odkClient.getOfficeList();
+  @PostMapping("/tables/upload")
+  public String uploadSubmit(@RequestParam("zipFile") MultipartFile file,
+      @RequestParam("officeId") List<String> offices, Model model) {
 
-		model.addAttribute("offices", menuOffices);
+    OdkClient odkClient = odkClientFactory.getOdkClient();
+    FormUploadResult result;
+    try {
+      result = odkClient.uploadFile(file, offices);
+      model.addAttribute("result", result);
+      model.addAttribute("msg", "File uploaded.");
+      model.addAttribute("css", "success");
+    } catch (IOException e) {
+      model.addAttribute("msg", "Upload failed.");
+      model.addAttribute("css", "danger");
 
-		return "upload_form_template";
-	}
+    }
+    List<RegionalOffice> menuOffices = odkClient.getOfficeList();
+
+    model.addAttribute("offices", menuOffices);
+
+    return "upload_form_template";
+  }
+
+
 
 }

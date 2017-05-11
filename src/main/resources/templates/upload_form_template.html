@@ -18,8 +18,8 @@
 				<span aria-hidden="true">×</span>
 			</button>
 			<strong th:text="${msg}"></strong>
-			<p th:if="${result != null}">Files uploaded:
-			<ul th:each="file: ${result.getManifest.files}">
+			<p th:if="${result != null and result.manifest != null and result.manifest.files != null }">Files uploaded:
+			<ul th:each="file: ${result.manifest.files}">
 				<li th:text="${file.filename}">File</li>
 			</ul></p>
 			<p th:if="${result != null and result.notProcessedFiles != null}">Files not uploaded

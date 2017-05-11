@@ -31,7 +31,7 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
   public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
       final Object handler, final ModelAndView modelAndView) throws Exception {
 
-    logger.info("Applying MenuInterceptor to " + request.getRequestURI());
+    logger.debug("Applying MenuInterceptor to " + request.getRequestURI());
     if (OdkClientUtils.getRestTemplate() != null && modelAndView != null) {
       OdkClient odkClient = odkClientFactory.getOdkClient();
       List<String> tableIds = odkClient.getTableIds();

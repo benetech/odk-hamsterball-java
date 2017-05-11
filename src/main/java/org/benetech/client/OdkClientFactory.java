@@ -24,9 +24,9 @@ public class OdkClientFactory {
     String odkAppId = webServicesProperties.getProperty("odk.app.id");
     String odkClientVersion = webServicesProperties.getProperty("odk.client.version");
     
-    logger.info("Setting odk.url to " + odkUrlString);
-    logger.info("Setting odk.app.id to " + odkAppId);
-    logger.info("Setting odk.client.version to " + odkClientVersion);
+    logger.debug("Setting odk.url to " + odkUrlString);
+    logger.debug("Setting odk.app.id to " + odkAppId);
+    logger.debug("Setting odk.client.version to " + odkClientVersion);
 
 
     URL odkUrl = null;

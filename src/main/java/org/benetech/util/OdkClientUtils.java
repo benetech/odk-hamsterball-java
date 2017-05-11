@@ -22,10 +22,10 @@ public class OdkClientUtils {
     try {
       Map<String, Object> userDetails = (Map<String, Object>) authentication.getDetails();
 
-      if (userDetails == null || userDetails.get(GeneralConsts.ODK_CLIENT) == null) {
+      if (userDetails == null || userDetails.get(GeneralConsts.ODK_REST_CLIENT) == null) {
         // TODO: Get reauthenticated. Easy workaround may be to force logout for now.
       } else {
-        restTemplate = (RestTemplate) userDetails.get(GeneralConsts.ODK_CLIENT);
+        restTemplate = (RestTemplate) userDetails.get(GeneralConsts.ODK_REST_CLIENT);
       }
     } catch (ClassCastException e) {
       logger.info("Unable to get REST template for this user.");

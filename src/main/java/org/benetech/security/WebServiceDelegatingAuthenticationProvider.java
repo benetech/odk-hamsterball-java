@@ -64,7 +64,7 @@ public class WebServiceDelegatingAuthenticationProvider implements Authenticatio
     ResponseEntity<List<String>> getResponse = restTemplate.exchange(getRolesGrantedUrl,
         HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {});
 
-    userDetails.put(GeneralConsts.ODK_CLIENT, restTemplate);
+    userDetails.put(GeneralConsts.ODK_REST_CLIENT, restTemplate);
     
     if (getResponse.getStatusCode().equals(HttpStatus.OK)) {
       Set<GrantedAuthority> authorized = new HashSet<GrantedAuthority>();
