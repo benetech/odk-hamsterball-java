@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{odk_tables_layout}">
+<th:block layout:fragment="title" th:text="'Rows for ' + ${tableId}"></th:block>
+<body>
+	<th:block layout:fragment="odktablescontent">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Row eTag</th>
+					<th>Create User</th>
+					<th>Update User</th>
+					<th:block th:each="col: ${rowResourceList.rows[0].values}">
+						<th th:text="${col.column}">User-defined Columns</th>
+					</th:block>
+					<th>Locale</th>
+					<th>Savepoint Type</th>
+					<th>Savepoint Timestamp</th>
+					<th>Savepoint Creator</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th>Row eTag</th>
+					<th>Create User</th>
+					<th>Update User</th>
+					<th:block th:each="col: ${rowResourceList.rows[0].values}">
+						<th th:text="${col.column}">User-defined Columns</th>
+					</th:block>
+					<th>Locale</th>
+					<th>Savepoint Type</th>
+					<th>Savepoint Timestamp</th>
+					<th>Savepoint Creator</th>
+				</tr>
+			</tfoot>
+			<tbody th:each="row: ${rowResourceList.rows}">
+				<tr>
+					<td th:text="${row.rowETag}"></td>
+					<td th:text="${row.createUser}"></td>
+					<td th:text="${row.lastUpdateUser}"></td>
+					<th:block th:each="col: ${row.values}">
+						<td th:text="${col.value}">User-defined Columns</td>
+					</th:block>
+					<td th:text="${row.locale}"></td>
+					<td th:text="${row.savepointType}"></td>
+					<td th:text="${row.savepointTimestamp}"></td>
+					<td th:text="${row.savepointCreator}"></td>
+				</tr>
+			</tbody>
+		</table>
+
+	</th:block>
+</body>
+</html>

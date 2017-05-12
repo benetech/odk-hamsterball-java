@@ -5,7 +5,7 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{odk_tables_layout}">
 <th:block layout:fragment="title"
-	th:text="'File Manifest for ' + ${tableId}"></th:block>
+	th:text="'File Attachments for ' + ${tableId}"></th:block>
 <body>
 	<th:block layout:fragment="odktablescontent">
 		<table class="table">
@@ -29,8 +29,7 @@
 			</tfoot>
 			<tbody th:each="file: ${manifest.files}">
 				<tr>
-					<td><a th:text="${file.filename}"
-						th:href="@{|/file/${file.filename}|}"></a></td>
+					<td th:text="${file.filename}"></td>
 					<td th:text="${file.contentLength}"></td>
 					<td th:text="${file.contentType}"></td>
 					<td th:text="${file.md5hash}"></td>

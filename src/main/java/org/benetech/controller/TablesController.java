@@ -11,6 +11,8 @@ import org.apache.commons.logging.LogFactory;
 import org.benetech.client.OdkClient;
 import org.benetech.client.OdkClientFactory;
 import org.opendatakit.aggregate.odktables.rest.entity.OdkTablesFileManifest;
+import org.opendatakit.aggregate.odktables.rest.entity.RowResourceList;
+import org.opendatakit.aggregate.odktables.rest.entity.TableResource;
 import org.opendatakit.api.forms.entity.FormUploadResult;
 import org.opendatakit.api.offices.entity.RegionalOffice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,30 @@ public class TablesController {
     model.addAttribute("manifest", manifest);
     model.addAttribute("tableId", tableId);
     return "manifest";
+  }
+  
+  @RequestMapping("/tables/attachments/{tableId}")
+  public String attachments(@PathVariable("tableId") String tableId, Model model) {
+
+    OdkClient odkClient = odkClientFactory.getOdkClient();
+    TableResource tableResource = odkClient.getTableResource(tableId);
+    OdkTablesFileManifest manifest = odkClient.getTableAttachmentManifest(tableId, tableResource.getSchemaETag());
+    model.addAttribute("manifest", manifest);
+    model.addAttribute("tableId", tableId);
+    return "attachments";
+  }
+  
+  @RequestMapping("/tables/rows/{tableId}")
+  public String rows(@PathVariable("tableId") String tableId, Model model) {
+
+    OdkClient odkClient = odkClientFactory.getOdkClient();
+    TableResource tableResource = odkClient.getTableResource(tableId);
+    RowResourceList rowResourceList = odkClient.getRowResourceList(tableId, tableResource.getSchemaETag());
+    model.addAttribute("tableResource", tableResource);
+    model.addAttribute("rowResourceList", rowResourceList);
+    model.addAttribute("tableId", tableId);
+    
+    return "rows";
   }
 
   @GetMapping("/tables/upload")

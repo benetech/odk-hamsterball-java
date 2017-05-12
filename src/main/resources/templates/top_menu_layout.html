@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorate="~{root_layout}">
+<head>
+<link rel="stylesheet" href="/css/menulayout.css">
+</head>
+
+<body>
+	<th:block layout:fragment="topfragment">
+		<!-- Static navbar -->
+		<nav class="navbar navbar-default navbar-static-top">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed"
+						data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+						aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span> <span
+							class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#"><img id="odk-menu-icon"
+						alt="ODK Hamster Client" src="/images/hamster_32.png" width="32"
+						height="32"></a>
+				</div>
+				<div id="navbar" class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<!--<li class="active"><a href="#">Home</a></li>-->
+						<li class="dropdown"><a href="#" class="dropdown-toggle"
+							data-toggle="dropdown" role="button" aria-haspopup="true"
+							aria-expanded="false">Form Tables <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="/tables/upload">Upload New Table</a></li>
+								<li role="separator" class="divider"></li>
+								<li class="dropdown-header">Existing Form Tables</li>
+								<th:block th:each="topTid: ${tableIds}">
+									<li><a th:text="${topTid}"
+										th:href="@{|/tables/manifest/${topTid}|}"></a></li>
+								</th:block>
+							</ul></li>
+
+						<li class="dropdown"
+							sec:authorize="hasRole('ROLE_SITE_ACCESS_ADMIN')"><a
+							href="#" class="dropdown-toggle" data-toggle="dropdown"
+							role="button" aria-haspopup="true" aria-expanded="false">Administer
+								Site <span class="caret"></span>
+						</a>
+							<ul class="dropdown-menu">
+								<li><a href="/admin/users">Set Users and Roles</a></li>
+							</ul></li>
+
+						<li class="dropdown"><a href="#" class="dropdown-toggle"
+							data-toggle="dropdown" role="button" aria-haspopup="true"
+							aria-expanded="false">My Account <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="/whoami">Who Am I?</a></li>
+								<li><a href="/password">Change Password</a></li>
+							</ul></li>
+
+					</ul>
+					<div class="navbar-header navbar-right">
+						<form id="logout_form" th:action="@{/logout}" method="post">
+							<input id="odk-sign-out" class="btn btn-default" type="submit"
+								value="Sign Out" />
+						</form>
+					</div>
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="#">Logged in as <span
+								th:text="${currentUser.fullName}">Javier Cáceres</span></a></li>
+					</ul>
+
+				</div>
+				<!--/.nav-collapse -->
+			</div>
+		</nav>
+		<div class="container" layout:fragment="bodycontainer">
+
+			<h1>
+				<th:block layout:fragment="title"></th:block>
+			</h1>
+
+
+			<section layout:fragment="content">
+				<p>Page content goes here</p>
+			</section>
+
+		</div>
+	</th:block>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorate="~{top_menu_layout}">
+<head>
+<link rel="stylesheet" href="/css/simplesidebar.css">
+</head>
+
+<body>
+	<th:block layout:fragment="bodycontainer">
+		<div id="wrapper">
+			<div id="sidebar-wrapper">
+				<ul class="sidebar-nav">
+					<li class="sidebar-brand" th:text="${tableId}">tableId</li>
+					<li><a th:href="@{|/tables/manifest/${tableId}|}">Manifest</a></li>
+					<li><a th:href="@{|/tables/rows/${tableId}|}">Rows</a></li>
+					<li><a th:href="@{|/tables/attachments/${tableId}|}">Attachments</a></li>
+				</ul>
+			</div>
+
+
+			<div id="page-content-wrapper">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-lg-12">
+							<h1>
+								<th:block layout:fragment="title"></th:block>
+							</h1>
+							<a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle
+								Side Menu</a>
+							<section layout:fragment="odktablescontent"></section>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</th:block>
+
+	<th:block layout:fragment="bodyend">
+
+		<!-- Simple Sidebar Menu Toggle Script -->
+		<script>
+			$("#wrapper").toggleClass("toggled", true);
+			$("#menu-toggle").click(function(e) {
+				e.preventDefault();
+				$("#wrapper").toggleClass("toggled");
+			});
+		</script>
+	</th:block>
+</body>
+</html>
