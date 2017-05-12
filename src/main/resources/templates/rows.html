@@ -7,7 +7,7 @@
 <th:block layout:fragment="title" th:text="'Rows for ' + ${tableId}"></th:block>
 <body>
 	<th:block layout:fragment="odktablescontent">
-		<table class="table">
+		<table class="table" th:if="${rowResourceList.rows != null and not #lists.isEmpty(rowResourceList.rows)}">
 			<thead>
 				<tr>
 					<th>Row eTag</th>
@@ -51,7 +51,9 @@
 				</tr>
 			</tbody>
 		</table>
-
+		<div
+			th:if="${rowResourceList.rows == null or #lists.isEmpty(rowResourceList.rows)}">
+			There are no files.</div>
 	</th:block>
 </body>
 </html>

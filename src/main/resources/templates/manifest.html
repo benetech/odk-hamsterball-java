@@ -8,7 +8,7 @@
 	th:text="'File Manifest for ' + ${tableId}"></th:block>
 <body>
 	<th:block layout:fragment="odktablescontent">
-		<table class="table">
+		<table class="table" th:if="${manifest.files != null and not #lists.isEmpty(manifest.files)}">
 			<thead>
 				<tr>
 					<th>Filename</th>
@@ -38,7 +38,9 @@
 				</tr>
 			</tbody>
 		</table>
-
+		<div
+			th:if="${manifest.files == null or #lists.isEmpty(manifest.files)}">
+			There are no files.</div>
 	</th:block>
 </body>
 </html>
