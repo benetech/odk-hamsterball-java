@@ -10,6 +10,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.benetech.constants.GeneralConsts;
+import org.benetech.model.form.UserEntityForm;
 import org.opendatakit.aggregate.odktables.rest.entity.OdkTablesFileManifest;
 import org.opendatakit.aggregate.odktables.rest.entity.RowResourceList;
 import org.opendatakit.aggregate.odktables.rest.entity.TableResource;
@@ -24,6 +25,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -93,12 +95,28 @@ public class OdkClient {
     ResponseEntity<String> postResponse =
         restTemplate.postForEntity(changePasswordUrl, request, String.class);
   }
+  
+  public HttpStatus updateUser(UserEntity userEntity) {
+    String postUserUrl = odkUrl.toExternalForm() + ADMIN_USERS_ENDPOINT;
 
-  public List<UserEntity> getUserAuthorityGrid() {
+    HttpEntity<UserEntity> postUserEntity = new HttpEntity<>(userEntity);
+
+    // Submit a new user
+    ResponseEntity<UserEntity> postResponse =
+        restTemplate.exchange(postUserUrl, HttpMethod.POST, postUserEntity, UserEntity.class);
+    
+    return postResponse.getStatusCode();
+  }
+  
+  public List<UserEntityForm> getUserAuthorityGrid() {
     String getUserListUrl = odkUrl.toExternalForm() + ADMIN_USERS_ENDPOINT;
     ResponseEntity<List<UserEntity>> getResponse = restTemplate.exchange(getUserListUrl,
         HttpMethod.GET, null, new ParameterizedTypeReference<List<UserEntity>>() {});
-    return getResponse.getBody();
+    List<UserEntityForm> entityFormList = new ArrayList<UserEntityForm>();
+    for (UserEntity userEntity: getResponse.getBody()) {
+      entityFormList.add(new UserEntityForm(userEntity));
+    }
+    return entityFormList;
   }
 
   public List<RoleDescription> getRoleList() {

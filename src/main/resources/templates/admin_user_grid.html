@@ -4,19 +4,26 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{top_menu_layout}">
-   <th:block layout:fragment="title">Users and Permissions</th:block>
+<head>
+<link rel="stylesheet" href="/css/modal.css">
+</head>
+
+<th:block layout:fragment="title">Users and Permissions</th:block>
 <body>
 	<section layout:fragment="content">
-
+		<!-- Button trigger modal -->
+		<button type="button" class="btn btn-primary" data-toggle="modal"
+			data-target="#addEditUserModal">Add User</button>
 		<table class="table">
 			<thead>
 				<tr>
 					<th>Full Name</th>
 					<th>User ID</th>
 					<th>Office</th>
-					<th:block th:each="role: ${roles}">
+					<th:block th:each="role: ${roleDescriptions}">
 						<th th:text="${role.name}" th:attr="title=${role.description}"></th>
 					</th:block>
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tfoot>
@@ -24,23 +31,136 @@
 					<th>Full Name</th>
 					<th>User ID</th>
 					<th>Office</th>
-					<th:block th:each="role: ${roles}">
+					<th:block th:each="role: ${roleDescriptions}">
 						<th th:text="${role.name}" th:attr="title=${role.description}"></th>
 					</th:block>
+					<th>Actions</th>
 				</tr>
 			</tfoot>
 			<tbody th:each="user: ${users}">
 				<tr>
 					<td th:text="${user.fullName}">Fred User</td>
-					<td th:text="${user.userId}">username:fred</td>
-					<td th:text="${offices[user.officeId] != null} ? ${offices[user.officeId].name + ' (' + user.officeId + ')'}">Madison, Wisconsin (madison)</td>
-					<th:block th:each="role: ${roles}">
+					<td th:text="${user.username}">fred</td>
+					<td
+						th:text="${offices[user.officeId] != null} ? ${offices[user.officeId].name + ' (' + user.officeId + ')'}">Madison,
+						Wisconsin (madison)</td>
+					<th:block th:each="role: ${roleDescriptions}">
 						<td th:text="${#lists.contains(user.roles, role.role)} ? 'yes'"></td>
 					</th:block>
+					<th><button type="button" class="btn btn-primary"
+							data-toggle="modal" data-target="#addEditUserModal"
+							th:attr="data-fullname=${user.fullName},data-username=${user.username},data-officeid=${user.officeId},data-roles=${user.roles}">Edit
+							User</button></th>
 				</tr>
 			</tbody>
 		</table>
 
+
+		<!-- Modal -->
+		<div class="modal fade" id="addEditUserModal" tabindex="-1"
+			role="dialog" aria-labelledby="addEditUserModalLabel"
+			aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="addEditUserModalLabel">Add/Edit
+							User</h5>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form th:action="@{/admin/users}" method="post"
+							id="addEditUserForm">
+							<div class="form-group">
+								<label class="control-label" for="username"> Username: </label>
+								<input type="text" name="username" id="username"
+									class="form-control"></input>
+							</div>
+							<div class="form-group">
+								<label class="control-label" for="fullName"> Full Name:
+								</label> <input type="text" name="fullName" id="fullName"
+									class="form-control"></input>
+							</div>
+							<div class="form-group">
+								<label for="officeId" class="control-label">Office:</label> <select
+									class="form-control" id="officeId" name="officeId">
+									<option>Select an office...</option>
+									<option th:each="office: ${offices}"
+										th:value="${office.value.officeId}"
+										th:text="${office.value.name} + ' (' + ${office.value.officeId} + ')'">Oostburg
+										(oostburg)</option>
+
+								</select>
+							</div>
+							<fieldset class="form-group">
+								<legend>Roles:</legend>
+								<div class="form-check">
+									<div class="checkbox"
+										th:each="roleDescription: ${roleDescriptions}">
+										<label class="form-check-label"> <input
+											type="checkbox" name="roles" class="form-check-input"
+											th:value="${roleDescription.role}"
+											th:attr="title=${roleDescription.description}"><span
+											th:text="${roleDescription.name}"></span>
+										</label>
+									</div>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">Close</button>
+						<button name="addEditButton" id="addEditButton" type="button"
+							class="btn btn-primary" data-dismiss="modal">Save
+							changes</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</section>
+
+	<th:block layout:fragment="bodyend">
+		<script>
+			$('#addEditUserModal').on('show.bs.modal', function(event) {
+				var button = $(event.relatedTarget)
+				var fullName = button.data('fullname') // Extract info from data-* attributes
+				var username = button.data('username')
+				var officeId = button.data('officeid')
+				var roles = button.data('roles')
+				if (roles == null) { roles = ''; }
+
+				var modal = $(this)
+				modal.find('input#fullName').val(fullName)
+				modal.find('input#username').val(username)
+				modal.find('select#officeId').val(officeId)
+
+				$("input[name='roles']").each(function() {
+					if (roles.includes($(this).val())) {
+						$(this).prop('checked', true);
+					}
+				});
+
+				if (username == 'anonymous') {
+					modal.find('input#fullName').prop('disabled', true);
+					modal.find('input#username').prop('disabled', true);
+				} else {
+					modal.find('input#fullName').prop('disabled', false);
+					modal.find('input#username').prop('disabled', false);
+				}
+
+			})
+
+			$('#addEditButton').on('click', function(event) {
+				var $button = $(event.target); // The clicked button
+				$('#addEditUserForm').submit()
+			});
+		</script>
+
+	</th:block>
+
+
 </body>
 </html>

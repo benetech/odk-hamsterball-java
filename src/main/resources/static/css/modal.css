@@ -1,0 +1,8 @@
+h5#addEditUserModalLabel {
+	font-size: 20px;
+	display:inline;
+}
+
+div.modal-body form fieldset legend {
+	margin-bottom: 5px;
+}
