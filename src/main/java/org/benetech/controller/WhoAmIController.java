@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.benetech.client.OdkClient;
 import org.benetech.client.OdkClientFactory;
 import org.opendatakit.api.users.entity.RoleDescription;
@@ -18,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class WhoAmIController {
-
-  private static Log logger = LogFactory.getLog(WhoAmIController.class);
 
   @Autowired
   OdkClientFactory odkClientFactory;
@@ -38,10 +34,8 @@ public class WhoAmIController {
     Map<String, String> roleDescriptions = new HashMap<String, String>();
     for (RoleDescription role : roles) {
       roleDescriptions.put(role.getRole(), role.getName());
-      logger.info(role.getRole() + " " + role.getName());
     }
     model.addAttribute("roleDescriptions", roleDescriptions);
-    logger.info("roleDescriptions: " + roleDescriptions);
 
     return "whoami";
   }

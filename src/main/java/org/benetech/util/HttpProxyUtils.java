@@ -131,6 +131,8 @@ public class HttpProxyUtils {
       String headerName = headerNames.nextElement();
       String headerValue = request.getHeader(headerName);
       rb.addHeader(headerName, headerValue);
+      logger.info("header: " + headerName + ": " + headerValue);
+      
     }
 
     HttpUriRequest proxiedRequest = rb.build();
