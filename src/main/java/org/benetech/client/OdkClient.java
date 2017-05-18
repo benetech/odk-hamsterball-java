@@ -47,7 +47,7 @@ public class OdkClient {
 
   public static String ADMIN_USERS_ENDPOINT = "/admin/users";
   public static String ADMIN_DELETE_USER_ENDPOINT = "/admin/users/username:{username}";
-  public static String ADMIN_ROLES_ENDPOINT = "/admin/roles";
+  public static String ROLES_LIST_ENDPOINT = "/roles/list";
   public static String ADMIN_CHANGE_PASSWORD = "/admin/users/username:{username}/password";
 
   public static String TABLES_ENDPOINT = "/odktables/{appId}/tables";
@@ -141,7 +141,7 @@ public class OdkClient {
   }
 
   public List<RoleDescription> getRoleList() {
-    String getUserListUrl = odkUrl.toExternalForm() + ADMIN_ROLES_ENDPOINT;
+    String getUserListUrl = odkUrl.toExternalForm() + ROLES_LIST_ENDPOINT;
     ResponseEntity<List<RoleDescription>> getResponse = restTemplate.exchange(getUserListUrl,
         HttpMethod.GET, null, new ParameterizedTypeReference<List<RoleDescription>>() {});
     return getResponse.getBody();

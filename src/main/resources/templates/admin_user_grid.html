@@ -67,7 +67,7 @@
 							th:attr="data-fullname=${user.fullName},data-username=${user.username}">Change
 							Password</button>
 						<button
-							th:if="${user.username != 'anonymous' and user.username != 'admin'}"
+							th:if="${user.username != 'anonymous' and user.username != 'admin' and user.userId != currentUser.userId}"
 							type="button" class="btn btn-danger" data-toggle="modal"
 							data-target="#deleteUserModal"
 							th:attr="data-fullname=${user.fullName},data-username=${user.username}">Delete</button></th>
