@@ -44,10 +44,10 @@ public class OdkClient {
   public static String FORM_UPLOAD_ENDPOINT = "/forms/{appId}/{odkClientVersion}";
 
   public static String ROLES_GRANTED_ENDPOINT = "/roles/granted";
+  public static String ROLES_LIST_ENDPOINT = "/roles/list";
 
   public static String ADMIN_USERS_ENDPOINT = "/admin/users";
   public static String ADMIN_DELETE_USER_ENDPOINT = "/admin/users/username:{username}";
-  public static String ROLES_LIST_ENDPOINT = "/roles/list";
   public static String ADMIN_CHANGE_PASSWORD = "/admin/users/username:{username}/password";
 
   public static String TABLES_ENDPOINT = "/odktables/{appId}/tables";

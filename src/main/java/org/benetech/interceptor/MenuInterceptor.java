@@ -34,8 +34,10 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
     logger.debug("Applying MenuInterceptor to " + request.getRequestURI());
     if (OdkClientUtils.getRestTemplate() != null && modelAndView != null) {
       OdkClient odkClient = odkClientFactory.getOdkClient();
-      List<String> tableIds = odkClient.getTableIds();
-      modelAndView.getModelMap().addAttribute("tableIds", tableIds);
+      if (request.isUserInRole("ROLE_SYNCHRONIZE_TABLES")) {
+        List<String> tableIds = odkClient.getTableIds();
+        modelAndView.getModelMap().addAttribute("tableIds", tableIds);
+      }
       UserEntity user = odkClient.getCurrentUser();
       modelAndView.getModelMap().addAttribute("currentUser", user);
 
