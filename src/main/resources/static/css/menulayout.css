@@ -2,10 +2,6 @@ body {
 	min-height: 2000px;
 }
 
-a {
-	color: #001f51;
-}
-
 .container {
 	background-color: white;
 }
@@ -24,10 +20,7 @@ a {
 	background-color: white;
 }
 
-h1 {
-	color: #33873f;
-	font-family: 'Khula', sans-serif;
-}
+
 
 #odk-menu-icon {
 	margin-top: -6px;

@@ -10,7 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.benetech.client.OdkClient;
 import org.benetech.client.OdkClientFactory;
-import org.benetech.util.HttpProxyUtil;
+import org.benetech.util.HttpProxyUtils;
 import org.opendatakit.api.forms.entity.FormUploadResult;
 import org.opendatakit.api.offices.entity.RegionalOffice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class ProxyController {
     String requestUrl = request.getRequestURI().substring(request.getContextPath().length() + "/file".length());
     logger.info("requestUrl: " + requestUrl);
     endpointUrl.append(requestUrl);
-    HttpProxyUtil.proxyRequest(request, response, endpointUrl.toString());
+    HttpProxyUtils.proxyRequest(request, response, endpointUrl.toString());
   }
   
 

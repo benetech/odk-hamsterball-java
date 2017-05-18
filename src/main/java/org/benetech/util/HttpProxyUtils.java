@@ -31,9 +31,9 @@ import org.springframework.web.client.RestTemplate;
  * @author Mateusz Radziszewski
  * @see http://stackoverflow.com/questions/31452074/how-to-proxy-http-requests-in-spring-mvc
  */
-public class HttpProxyUtil {
+public class HttpProxyUtils {
 
-  private static Log logger = LogFactory.getLog(HttpProxyUtil.class);
+  private static Log logger = LogFactory.getLog(HttpProxyUtils.class);
 
   public static void proxyRequest(HttpServletRequest request, HttpServletResponse response,
       String endpointUrl) {

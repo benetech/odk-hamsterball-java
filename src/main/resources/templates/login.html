@@ -8,12 +8,27 @@
 <th:block layout:fragment="title">Log in to Open Data Kit 2.0 Server</th:block>
 <body>
 	<section layout:fragment="content">
-		<div th:if="${param.error}">Invalid username and password.</div>
-		<div th:if="${param.logout}">You have been logged out.</div>
+		<div th:if="${param.error}"
+			th:class="'alert alert-warning alert-dismissible'"
+			role="alert">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">×</span>
+			</button>
+			<strong>Incorrect username or password.</strong>
+		</div>
+		<div th:if="${param.logout}"
+			th:class="'alert alert-info alert-dismissible'"
+			role="alert">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">×</span>
+			</button>
+			<strong>You have been logged out.</strong>
+		</div>
 		<form th:action="@{/login}" method="post" class="form-horizontal">
 			<div class="form-group">
-				<label class="control-label col-sm-2" for="username"> User
-					Name : </label>
+				<label class="control-label col-sm-2" for="username"> Username : </label>
 				<div class="col-sm-10">
 					<input type="text" name="username" class="form-control"></input>
 				</div>

@@ -1,0 +1,118 @@
+<script>
+	$('#addEditUserModal').on('show.bs.modal', function(event) {
+		var button = $(event.relatedTarget)
+		clearAddEditErrors();
+		resetAddEditModalButtons();
+		var fullName = button.data('fullname') // Extract info from data-* attributes
+		var username = button.data('username')
+		var officeId = button.data('officeid')
+		var roles = button.data('roles')
+		if (roles == null) {
+			roles = '';
+		}
+
+		var modal = $(this)
+		modal.find('input#fullName').val(fullName)
+		modal.find('input#username').val(username)
+		modal.find('select#officeId').val(officeId)
+
+		$("input[name='roles']").each(function() {
+			if (roles.includes($(this).val())) {
+				$(this).prop('checked', true);
+			}
+		});
+
+		if (username == 'anonymous') {
+			modal.find('input#fullName').prop('disabled', true);
+			modal.find('input#username').prop('disabled', true);
+		} else {
+			modal.find('input#fullName').prop('disabled', false);
+			modal.find('input#username').prop('disabled', false);
+		}
+
+	})
+
+	function clearAddEditErrors() {
+		$("#addEditUserResult").remove();
+		$("#username-error").text('');
+		$("#fullname-error").text('');
+		$("#roles-error").text('');
+		$("#office-error").text('');
+	}
+
+	function dirtyAddEditModalButtons() {
+		$("#addEditUserCloseCancelButton").text("Close");
+		$("#addEditUserCloseCancelButton").removeClass("data-dismiss");
+		$("#addEditUserCloseCancelButton").removeClass("btn-secondary");
+		$("#addEditUserCloseCancelButton").addClass("btn-primary");
+		$("#addEditUserCloseCancelButton").on('click', function(event) {
+			// "replace" does not add history item, if we want one for some reason, use "href"
+			window.location.replace("/admin/users");
+		})
+		$("#addEditButton").addClass("btn-secondary");
+		$("#addEditButton").removeClass("btn-primary");
+	}
+
+	function resetAddEditModalButtons() {
+		$("#addEditUserCloseCancelButton").text("Cancel");
+		$("#addEditUserCloseCancelButton").addClass("data-dismiss");
+		$("#addEditUserCloseCancelButton").addClass("btn-secondary");
+		$("#addEditUserCloseCancelButton").removeClass("btn-primary");
+		$("#addEditUserCloseCancelButton").prop('onclick', null).off('click');
+		$("#addEditButton").removeClass("btn-secondary");
+		$("#addEditButton").addClass("btn-primary");
+	}
+
+	$('#addEditButton')
+			.on(
+					'click',
+					function(event) {
+						var button = $(event.target); // The clicked button
+						clearAddEditErrors();
+						$
+								.ajax({
+									type : 'POST',
+									url : '/admin/users',
+									data : $('#addEditUserForm').serialize(),
+									success : function(result) {
+										$("#addEditUserModal .modal-body")
+												.prepend(
+														'<div id="addEditUserResult" class="alert alert-success alert-dismissible" role="alert"/>');
+										$("#addEditUserResult")
+												.append(
+														'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
+										$("#addEditUserResult").append(
+												'<strong>'
+														+ result.summaryMessage
+														+ '</strong>');
+										dirtyAddEditModalButtons();
+									},
+									error : function(result) {
+										$("#addEditUserModal .modal-body")
+												.prepend(
+														'<div id="addEditUserResult" class="alert alert-danger alert-dismissible" role="alert"/>');
+										$("#addEditUserResult")
+												.append(
+														'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
+										$("#addEditUserResult")
+												.append(
+														'<strong>'
+																+ result.responseJSON.summaryMessage
+																+ '</strong>');
+										$("#username-error")
+												.text(
+														result.responseJSON.errors.username);
+										$("#fullname-error")
+												.text(
+														result.responseJSON.errors.fullName);
+										$("#roles-error")
+												.text(
+														result.responseJSON.errors.roles);
+										$("#offices-error")
+												.text(
+														result.responseJSON.errors.officeId);
+									},
+									dataType : "json"
+								});
+					});
+</script>

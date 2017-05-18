@@ -46,6 +46,7 @@ public class OdkClient {
   public static String ROLES_GRANTED_ENDPOINT = "/roles/granted";
 
   public static String ADMIN_USERS_ENDPOINT = "/admin/users";
+  public static String ADMIN_DELETE_USER_ENDPOINT = "/admin/users/username:{username}";
   public static String ADMIN_ROLES_ENDPOINT = "/admin/roles";
   public static String ADMIN_CHANGE_PASSWORD = "/admin/users/username:{username}/password";
 
@@ -87,6 +88,14 @@ public class OdkClient {
     return getResponse.getBody();
   }
 
+  
+  public HttpStatus deleteUser(String username) {
+    String deleteUserUrl = odkUrl.toExternalForm() + ADMIN_DELETE_USER_ENDPOINT.replace("{username}", username);
+    ResponseEntity<UserEntity> getResponse =
+        restTemplate.exchange(deleteUserUrl, HttpMethod.DELETE, null, UserEntity.class);
+    return getResponse.getStatusCode();
+  }
+  
   public void setCurrentUserPassword(String password) {
     String changePasswordUrl = odkUrl.toExternalForm() + USER_CHANGE_PASSWORD;
     MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
@@ -100,10 +109,22 @@ public class OdkClient {
     String postUserUrl = odkUrl.toExternalForm() + ADMIN_USERS_ENDPOINT;
 
     HttpEntity<UserEntity> postUserEntity = new HttpEntity<>(userEntity);
-
-    // Submit a new user
     ResponseEntity<UserEntity> postResponse =
         restTemplate.exchange(postUserUrl, HttpMethod.POST, postUserEntity, UserEntity.class);
+    
+    return postResponse.getStatusCode();
+  }
+
+  public HttpStatus changePasswordUser(String username, String password) {
+    String postUserUrl = odkUrl.toExternalForm() + ADMIN_CHANGE_PASSWORD.replace("{username}", username);
+
+    MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+    headers.add("Content-Type", "application/json");
+    HttpEntity<?> request = new HttpEntity<>(password, headers);
+
+    // Submit a new user
+    ResponseEntity<String> postResponse =
+        restTemplate.exchange(postUserUrl, HttpMethod.POST, request, String.class);
     
     return postResponse.getStatusCode();
   }
@@ -160,8 +181,6 @@ public class OdkClient {
 
   }
 
-
-
   public OdkTablesFileManifest getTableAttachmentManifest(String tableId, String schemaETag) {
 
     String getManifestUrl = getUrl(TABLE_ATTACHMENT_MANIFEST_ENDPOINT).replace("{tableId}", tableId)
@@ -175,7 +194,6 @@ public class OdkClient {
     return manifest;
 
   }
-
 
   public TableResource getTableResource(String tableId) {
 
@@ -212,7 +230,8 @@ public class OdkClient {
    * @param file
    * @param offices
    * @return
-   * @throws IOException File needs to be converted to FileSystemResource before transmission.
+   * @throws IOException 
+   * File needs to be converted to FileSystemResource before transmission.
    * @see http://stackoverflow.com/questions/41632647/multipart-file-upload-with-spring-resttemplate-and-jackson
    */
   public FormUploadResult uploadFile(MultipartFile file, List<String> offices) throws IOException {

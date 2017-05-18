@@ -11,9 +11,20 @@
 <th:block layout:fragment="title">Users and Permissions</th:block>
 <body>
 	<section layout:fragment="content">
+		<div th:if="${msg != null}"
+			th:class="'alert alert-' + ${css} + ' alert-dismissible'"
+			role="alert">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">×</span>
+			</button>
+			<strong th:text="${msg}"></strong>
+		</div>
 		<!-- Button trigger modal -->
-		<button type="button" class="btn btn-primary" data-toggle="modal"
-			data-target="#addEditUserModal">Add User</button>
+		<button type="button" class="btn btn-default" data-toggle="modal"
+			data-target="#addEditUserModal"
+			th:attr="data-fullname='',data-username='',data-officeid='',data-roles=''">Add
+			User</button>
 		<table class="table">
 			<thead>
 				<tr>
@@ -47,120 +58,36 @@
 					<th:block th:each="role: ${roleDescriptions}">
 						<td th:text="${#lists.contains(user.roles, role.role)} ? 'yes'"></td>
 					</th:block>
-					<th><button type="button" class="btn btn-primary"
+					<th><button type="button" class="btn btn-default"
 							data-toggle="modal" data-target="#addEditUserModal"
-							th:attr="data-fullname=${user.fullName},data-username=${user.username},data-officeid=${user.officeId},data-roles=${user.roles}">Edit
-							User</button></th>
+							th:attr="data-fullname=${user.fullName},data-username=${user.username},data-officeid=${user.officeId},data-roles=${user.roles}">Edit</button>
+						<button th:if="${user.username != 'anonymous'}" type="button"
+							class="btn btn-default" data-toggle="modal"
+							data-target="#changePasswordModal"
+							th:attr="data-fullname=${user.fullName},data-username=${user.username}">Change
+							Password</button>
+						<button
+							th:if="${user.username != 'anonymous' and user.username != 'admin'}"
+							type="button" class="btn btn-danger" data-toggle="modal"
+							data-target="#deleteUserModal"
+							th:attr="data-fullname=${user.fullName},data-username=${user.username}">Delete</button></th>
 				</tr>
 			</tbody>
 		</table>
 
+		<th:block th:include="admin_user_grid/add_user_modal"></th:block>
 
-		<!-- Modal -->
-		<div class="modal fade" id="addEditUserModal" tabindex="-1"
-			role="dialog" aria-labelledby="addEditUserModalLabel"
-			aria-hidden="true">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="addEditUserModalLabel">Add/Edit
-							User</h5>
-						<button type="button" class="close" data-dismiss="modal"
-							aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<form th:action="@{/admin/users}" method="post"
-							id="addEditUserForm">
-							<div class="form-group">
-								<label class="control-label" for="username"> Username: </label>
-								<input type="text" name="username" id="username"
-									class="form-control"></input>
-							</div>
-							<div class="form-group">
-								<label class="control-label" for="fullName"> Full Name:
-								</label> <input type="text" name="fullName" id="fullName"
-									class="form-control"></input>
-							</div>
-							<div class="form-group">
-								<label for="officeId" class="control-label">Office:</label> <select
-									class="form-control" id="officeId" name="officeId">
-									<option>Select an office...</option>
-									<option th:each="office: ${offices}"
-										th:value="${office.value.officeId}"
-										th:text="${office.value.name} + ' (' + ${office.value.officeId} + ')'">Oostburg
-										(oostburg)</option>
+		<th:block th:include="admin_user_grid/change_password_modal"></th:block>
 
-								</select>
-							</div>
-							<fieldset class="form-group">
-								<legend>Roles:</legend>
-								<div class="form-check">
-									<div class="checkbox"
-										th:each="roleDescription: ${roleDescriptions}">
-										<label class="form-check-label"> <input
-											type="checkbox" name="roles" class="form-check-input"
-											th:value="${roleDescription.role}"
-											th:attr="title=${roleDescription.description}"><span
-											th:text="${roleDescription.name}"></span>
-										</label>
-									</div>
-								</div>
-							</fieldset>
-						</form>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary"
-							data-dismiss="modal">Close</button>
-						<button name="addEditButton" id="addEditButton" type="button"
-							class="btn btn-primary" data-dismiss="modal">Save
-							changes</button>
-					</div>
-				</div>
-			</div>
-		</div>
+		<th:block th:include="admin_user_grid/delete_user_modal"></th:block>
+
 	</section>
 
 	<th:block layout:fragment="bodyend">
-		<script>
-			$('#addEditUserModal').on('show.bs.modal', function(event) {
-				var button = $(event.relatedTarget)
-				var fullName = button.data('fullname') // Extract info from data-* attributes
-				var username = button.data('username')
-				var officeId = button.data('officeid')
-				var roles = button.data('roles')
-				if (roles == null) { roles = ''; }
+		<th:block th:include="admin_user_grid/add_user_script"></th:block>
 
-				var modal = $(this)
-				modal.find('input#fullName').val(fullName)
-				modal.find('input#username').val(username)
-				modal.find('select#officeId').val(officeId)
+		<th:block th:include="admin_user_grid/change_password_script"></th:block>
 
-				$("input[name='roles']").each(function() {
-					if (roles.includes($(this).val())) {
-						$(this).prop('checked', true);
-					}
-				});
-
-				if (username == 'anonymous') {
-					modal.find('input#fullName').prop('disabled', true);
-					modal.find('input#username').prop('disabled', true);
-				} else {
-					modal.find('input#fullName').prop('disabled', false);
-					modal.find('input#username').prop('disabled', false);
-				}
-
-			})
-
-			$('#addEditButton').on('click', function(event) {
-				var $button = $(event.target); // The clicked button
-				$('#addEditUserForm').submit()
-			});
-		</script>
-
-	</th:block>
-
-
+		<th:block th:include="admin_user_grid/delete_user_script"></th:block>
 </body>
 </html>

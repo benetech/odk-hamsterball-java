@@ -1,30 +1,29 @@
 package org.benetech.validator;
 
 import org.apache.commons.lang3.StringUtils;
-import org.benetech.model.form.UserEntityForm;
+import org.benetech.model.form.ChangePasswordAdminForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 @Component
-public class UserEntityFormValidator implements Validator {
+public class ChangePasswordAdminFormValidator extends ChangePasswordFormValidator
+    implements Validator {
 
   @Override
   public boolean supports(Class<?> clazz) {
-    return UserEntityForm.class.equals(clazz);
+    return ChangePasswordAdminForm.class.equals(clazz);
 
   }
 
   @Override
   public void validate(Object target, Errors errors) {
 
-    UserEntityForm user = (UserEntityForm) target;
+    super.validate(target, errors);
+    ChangePasswordAdminForm passwordForm = (ChangePasswordAdminForm) target;
 
-    if (StringUtils.isEmpty(user.getUsername())) {
+    if (StringUtils.isEmpty(passwordForm.getUsername())) {
       errors.rejectValue("username", "empty");
-    }
-    if (StringUtils.isEmpty(user.getFullName())) {
-      errors.rejectValue("fullName", "empty");
     }
   }
 

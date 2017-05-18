@@ -28,19 +28,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class WebServiceDelegatingAuthenticationProvider implements AuthenticationProvider {
 
-  
+
   Properties webServicesProperties;
 
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
     String odkUrlString = webServicesProperties.getProperty("odk.url");
     String odkRealmName = webServicesProperties.getProperty("odk.realm");
-    Map<String,Object> userDetails = new HashMap<String,Object>();
-    
+    Map<String, Object> userDetails = new HashMap<String, Object>();
+
     URL odkUrl = null;
     URI odkUri = null;
     if (odkUrlString == null) {
@@ -61,17 +62,25 @@ public class WebServiceDelegatingAuthenticationProvider implements Authenticatio
     RestTemplate restTemplate = DigestRestTemplateFactory.getRestTemplate(odkUri.getHost(),
         odkUri.getPort(), odkUri.getScheme(), odkRealmName, username, password);
     String getRolesGrantedUrl = odkUrl.toExternalForm() + OdkClient.ROLES_GRANTED_ENDPOINT;
-    ResponseEntity<List<String>> getResponse = restTemplate.exchange(getRolesGrantedUrl,
-        HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {});
+    ResponseEntity<List<String>> getResponse = null;
+    try {
+      getResponse = restTemplate.exchange(getRolesGrantedUrl, HttpMethod.GET, null,
+          new ParameterizedTypeReference<List<String>>() {});
+    } catch (HttpClientErrorException e) {
+      if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+        throw new BadCredentialsException("Unable to log in to remote web service.");
+      }
+    }
 
     userDetails.put(GeneralConsts.ODK_REST_CLIENT, restTemplate);
-    
+
     if (getResponse.getStatusCode().equals(HttpStatus.OK)) {
       Set<GrantedAuthority> authorized = new HashSet<GrantedAuthority>();
       for (String role : getResponse.getBody()) {
         authorized.add(new SimpleGrantedAuthority((String) role));
       }
-      UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password, authorized);
+      UsernamePasswordAuthenticationToken token =
+          new UsernamePasswordAuthenticationToken(username, password, authorized);
       token.setDetails(userDetails);
       return token;
     } else {
@@ -95,5 +104,5 @@ public class WebServiceDelegatingAuthenticationProvider implements Authenticatio
     this.webServicesProperties = webServicesProperties;
   }
 
-  
+
 }

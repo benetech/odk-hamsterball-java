@@ -1,4 +1,4 @@
-h5#addEditUserModalLabel {
+div.modal-header h5 {
 	font-size: 20px;
 	display:inline;
 }

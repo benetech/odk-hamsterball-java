@@ -1,0 +1,68 @@
+	<!-- Add/Edit User Modal -->
+		<div class="modal fade" id="addEditUserModal" tabindex="-1"
+			role="dialog" aria-labelledby="addEditUserModalLabel"
+			aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="addEditUserModalLabel">Add/Edit
+							User</h5>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form th:action="@{/admin/users}" method="post"
+							id="addEditUserForm" th:object="${user}">
+							<div class="form-group">
+								<label class="control-label" for="username"> Username: <span
+									id="username-error" class="text-danger"></span>
+								</label> <input type="text" name="username" id="username"
+									class="form-control"></input>
+							</div>
+							<div class="form-group">
+								<label class="control-label" for="fullName"> Full Name:
+									<span id="fullname-error" class="text-danger"></span>
+								</label> <input type="text" name="fullName" id="fullName"
+									class="form-control"></input>
+							</div>
+							<div class="form-group">
+								<label for="officeId" class="control-label">Office: <span
+									id="office-error" class="text-danger"></span>
+								</label> <select class="form-control" id="officeId" name="officeId">
+									<option>Select an office...</option>
+									<option th:each="office: ${offices}"
+										th:value="${office.value.officeId}"
+										th:text="${office.value.name} + ' (' + ${office.value.officeId} + ')'">Oostburg
+										(oostburg)</option>
+
+								</select>
+							</div>
+							<fieldset class="form-group">
+								<legend>Roles:</legend>
+								<div class="form-check">
+									<span id="roles-error" class="text-danger"></span>
+									<div class="checkbox"
+										th:each="roleDescription: ${roleDescriptions}">
+										<label class="form-check-label"> <input
+											type="checkbox" name="roles" class="form-check-input"
+											th:value="${roleDescription.role}"
+											th:attr="title=${roleDescription.description}"><span
+											th:text="${roleDescription.name}"></span>
+										</label>
+									</div>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" id="addEditUserCloseCancelButton"
+							data-dismiss="modal">Cancel</button>
+						<button name="addEditButton" id="addEditButton" type="button"
+							class="btn btn-primary">Save
+							changes</button>
+					</div>
+				</div>
+			</div>
+		</div>

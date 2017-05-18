@@ -25,10 +25,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().ignoringAntMatchers("/file/**");
 
-    http.authorizeRequests()
-        // .antMatchers("/" ).permitAll() // For landing page
-        .anyRequest().authenticated().and().formLogin().loginPage("/login")
-        .failureUrl("/login?error").permitAll().and().logout().permitAll();
+    http.authorizeRequests().antMatchers("/css/**").permitAll() // For landing page
+        .antMatchers("/images/**").permitAll().antMatchers("/favicon.ico").permitAll().anyRequest()
+        .authenticated().and().formLogin().loginPage("/login").failureUrl("/login?error")
+        .permitAll().and().logout().permitAll().and().exceptionHandling()
+        .accessDeniedPage("/login?error");
+
   }
 
   @Autowired

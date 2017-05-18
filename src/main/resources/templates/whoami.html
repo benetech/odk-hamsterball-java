@@ -8,13 +8,15 @@
 <th:block layout:fragment="title">Who Am I?</th:block>
 <body>
 	<section layout:fragment="content">
-		<h2 th:text="'Username: ' + ${username}"></h2>
-		<h2 th:text="'Full name: ' + ${fullName}"></h2>
-		<h2 th:if="${officeId != null}" th:text="'Office ID: ' + ${officeId}"></h2>
+		<p th:text="'Username: ' + ${username}"></p>
+		<p th:text="'Full name: ' + ${fullName}"></p>
+		<p th:if="${officeId != null}" th:text="'Office ID: ' + ${officeId}"></p>
 
 		<h2>Roles</h2>
 		<ul th:each="role: ${roles}">
-			<li th:text="${role}"></li>
+		<!-- Why double-underscores? 
+		/* http://stackoverflow.com/questions/29755615/how-to-access-a-map-in-thymeleaf-spring-dialect-when-the-key-is-changing */ -->
+			<li th:text="${roleDescriptions[__${role}__]}">Role Name</li>
 		</ul>
 	</section>
 </body>
