@@ -132,11 +132,8 @@ public class HttpProxyUtils {
       String headerValue = request.getHeader(headerName);
       if ("host".equalsIgnoreCase(headerName)) {
         headerValue = targetUri.getHost();
-        logger.info("authority: " + headerValue);
       }
-      rb.addHeader(headerName, headerValue);
-      logger.info("header: " + headerName + ": " + headerValue);
-      
+      rb.addHeader(headerName, headerValue);      
     }
 
     HttpUriRequest proxiedRequest = rb.build();
