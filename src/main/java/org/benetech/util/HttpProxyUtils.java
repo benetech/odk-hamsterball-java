@@ -130,6 +130,10 @@ public class HttpProxyUtils {
     while (headerNames.hasMoreElements()) {
       String headerName = headerNames.nextElement();
       String headerValue = request.getHeader(headerName);
+      if ("host".equalsIgnoreCase(headerName)) {
+        headerValue = targetUri.getHost();
+        logger.info("authority: " + headerValue);
+      }
       rb.addHeader(headerName, headerValue);
       logger.info("header: " + headerName + ": " + headerValue);
       
