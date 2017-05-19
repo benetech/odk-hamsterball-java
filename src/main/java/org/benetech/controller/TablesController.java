@@ -1,6 +1,7 @@
 package org.benetech.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +11,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.benetech.client.OdkClient;
 import org.benetech.client.OdkClientFactory;
+import org.benetech.model.display.OdkTablesFileManifestEntryDisplay;
 import org.opendatakit.aggregate.odktables.rest.entity.OdkTablesFileManifest;
+import org.opendatakit.aggregate.odktables.rest.entity.OdkTablesFileManifestEntry;
 import org.opendatakit.aggregate.odktables.rest.entity.RowResourceList;
 import org.opendatakit.aggregate.odktables.rest.entity.TableResource;
 import org.opendatakit.api.forms.entity.FormUploadResult;
@@ -43,35 +46,42 @@ public class TablesController {
     model.addAttribute("tableId", tableId);
     return "manifest";
   }
-  
+
   @RequestMapping("/tables/attachments/{tableId}")
   public String attachments(@PathVariable("tableId") String tableId, Model model) {
 
     OdkClient odkClient = odkClientFactory.getOdkClient();
     TableResource tableResource = odkClient.getTableResource(tableId);
-    OdkTablesFileManifest manifest = odkClient.getTableAttachmentManifest(tableId, tableResource.getSchemaETag());
-    model.addAttribute("manifest", manifest);
+    OdkTablesFileManifest manifest =
+        odkClient.getTableAttachmentManifest(tableId, tableResource.getSchemaETag());
+    List<OdkTablesFileManifestEntryDisplay> manifestDisplayList =
+        new ArrayList<OdkTablesFileManifestEntryDisplay>();
+    for (OdkTablesFileManifestEntry manifestEntry : manifest.getFiles()) {
+      manifestDisplayList.add(new OdkTablesFileManifestEntryDisplay(manifestEntry));
+    }
+    model.addAttribute("manifest", manifestDisplayList);
     model.addAttribute("tableId", tableId);
     return "attachments";
   }
-  
+
   @GetMapping("/tables/export/{tableId}")
   public String exportForm(@PathVariable("tableId") String tableId, Model model) {
     OdkClient odkClient = odkClientFactory.getOdkClient();
     model.addAttribute("tableId", tableId);
     return "export";
   }
-    
+
   @RequestMapping("/tables/rows/{tableId}")
   public String rows(@PathVariable("tableId") String tableId, Model model) {
 
     OdkClient odkClient = odkClientFactory.getOdkClient();
     TableResource tableResource = odkClient.getTableResource(tableId);
-    RowResourceList rowResourceList = odkClient.getRowResourceList(tableId, tableResource.getSchemaETag());
+    RowResourceList rowResourceList =
+        odkClient.getRowResourceList(tableId, tableResource.getSchemaETag());
     model.addAttribute("tableResource", tableResource);
     model.addAttribute("rowResourceList", rowResourceList);
     model.addAttribute("tableId", tableId);
-    
+
     return "rows";
   }
 

@@ -27,7 +27,20 @@ public class ProxyController {
     StringBuffer endpointUrl =
         new StringBuffer(odkClientFactory.getOdkClient().getFileProxyEndpoint());
     logger.info("endpointUrl: " + endpointUrl);
+    logger.info("request.getContextPath() " + request.getContextPath());
     String requestUrl = request.getRequestURI().substring(request.getContextPath().length() + "/file".length());
+    logger.info("requestUrl: " + requestUrl);
+    endpointUrl.append(requestUrl);
+    HttpProxyUtils.proxyRequest(request, response, endpointUrl.toString());
+  }
+  
+  @RequestMapping("/attachment/**")
+  public void proxyAttachmentRequests(HttpServletRequest request, HttpServletResponse response) {
+    StringBuffer endpointUrl =
+        new StringBuffer(odkClientFactory.getOdkClient().getAttachmentProxyEndpoint());
+    logger.info("endpointUrl: " + endpointUrl);
+    logger.info("request.getContextPath() " + request.getContextPath());
+    String requestUrl = request.getRequestURI().substring(request.getContextPath().length() + "/attachment".length());
     logger.info("requestUrl: " + requestUrl);
     endpointUrl.append(requestUrl);
     HttpProxyUtils.proxyRequest(request, response, endpointUrl.toString());
@@ -48,5 +61,7 @@ public class ProxyController {
     endpointUrl.append(requestUrl);
     HttpProxyUtils.proxyRequest(request, response, endpointUrl.toString());
   }
+  
+  
 
 }

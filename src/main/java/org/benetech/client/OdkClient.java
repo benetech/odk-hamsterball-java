@@ -60,6 +60,8 @@ public class OdkClient {
 
   public static String TABLE_FILE_PROXY_ENDPOINT = "/odktables/{appId}/files/{odkClientVersion}";
   public static String TABLE_EXPORT_PROXY_ENDPOINT = "/odktables/{appId}";
+  public static String TABLE_ATTACHMENT_PROXY_ENDPOINT = "";
+
 
 
   private RestTemplate restTemplate;
@@ -81,6 +83,10 @@ public class OdkClient {
   
   public String getTableExportProxyEndpoint() {
     return getUrl(TABLE_EXPORT_PROXY_ENDPOINT);
+  }
+  
+  public String getAttachmentProxyEndpoint() {
+    return getUrl(TABLE_ATTACHMENT_PROXY_ENDPOINT);
   }
 
   public String getFormUploadEndpoint() {
