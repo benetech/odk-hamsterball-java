@@ -5,6 +5,8 @@
 	layout:decorate="~{top_menu_layout}">
 <head>
 <link rel="stylesheet" href="/css/simplesidebar.css">
+<link rel="stylesheet" href="/css/formtables.css">
+
 </head>
 
 <body>
@@ -16,6 +18,9 @@
 					<li><a th:href="@{|/tables/manifest/${tableId}|}">Manifest</a></li>
 					<li><a th:href="@{|/tables/rows/${tableId}|}">Rows</a></li>
 					<li><a th:href="@{|/tables/attachments/${tableId}|}">Attachments</a></li>
+					<li><a th:href="@{|/tables/export/${tableId}|}">Export
+							Data</a></li>
+
 				</ul>
 			</div>
 
@@ -23,12 +28,18 @@
 			<div id="page-content-wrapper">
 				<div class="container-fluid">
 					<div class="row">
-						<div class="col-lg-12">
-							<h1>
+						<div class="col-lg-8">
+							<h1 style="float: left">
 								<th:block layout:fragment="title"></th:block>
 							</h1>
-							<a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle
-								Side Menu</a>
+						</div>
+						<div class="col-lg-4">
+							<a href="#menu-toggle" class="btn btn-default" id="menu-toggle"
+								style="float: right">Toggle Side Menu</a>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
 							<section layout:fragment="odktablescontent"></section>
 						</div>
 					</div>
@@ -38,6 +49,7 @@
 	</th:block>
 
 	<th:block layout:fragment="bodyend">
+	<th:block layout:fragment="odk_tables_bodyend"></th:block>
 
 		<!-- Simple Sidebar Menu Toggle Script -->
 		<script>

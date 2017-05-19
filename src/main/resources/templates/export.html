@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{odk_tables_layout}">
+<th:block layout:fragment="title" th:text="'Export ' + ${tableId}"></th:block>
+<body>
+	<th:block layout:fragment="odktablescontent">
+		<div id="exportFormWrapper">
+			<form method="get" class="form-horizontal"
+				enctype="multipart/form-data" encoding="multipart/form-data"
+				accept-charset="UTF-8">
+
+
+				<div class="form-group">
+					<input type="hidden" name="tableId" id="tableId"></input> <label
+						for="tableId" class="control-label">Download format: </span>
+					</label> <select class="form-control" id="downloadFormat"
+						name="downloadFormat">
+						<option>Select a download format...</option>
+						<option value="CSV">CSV (Comma Separated Values)</option>
+						<option value="JSON">JSON</option>
+					</select>
+				</div>
+
+
+				<div class="form-check">
+					<div class="checkbox">
+						<label class="form-check-label"> <input type="checkbox" id="showDeleted"
+							name="showDeleted" class="form-check-input" th:value="true"></input>
+							Show deleted rows.
+						</label>
+					</div>
+				</div>
+
+				<div class="form-group">
+		
+						<button class="btn btn-primary" type="button"
+							id="downloadZippedButton">Download Zipped Data</button>
+
+				</div>
+			</form>
+		</div>
+	</th:block>
+
+	<th:block layout:fragment="odk_tables_bodyend">
+		<script>
+			$("#downloadZippedButton")
+					.on(
+							'click',
+							function(event) {
+								$("#exportFormResult").remove();
+
+								var tableId = "[[${tableId}]]" // Populated by Thymeleaf
+								var format = $("#downloadFormat").val()
+								var showDeleted = $("#showDeleted").is(
+										':checked')
+
+								if (format == 'JSON' || format == 'CSV') {
+
+									var href = "/tables/" + tableId
+											+ "/export/" + format
+											+ "/showDeleted/" + showDeleted;
+									
+									window.location.href = href;
+
+									$("#exportFormWrapper")
+											.prepend(
+													'<div id="exportFormResult" class="alert alert-info alert-dismissible" role="alert"/>');
+									$("#exportFormResult")
+											.append(
+													'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
+									$("#exportFormResult")
+											.append(
+													'<strong>Your file is being assembled and will download momentarily.</strong>');
+								} else {
+									$("#exportFormWrapper")
+											.prepend(
+													'<div id="exportFormResult" class="alert alert-danger alert-dismissible" role="alert"/>');
+									$("#exportFormResult")
+											.append(
+													'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
+									$("#exportFormResult")
+											.append(
+													'<strong>Please choose a download format.</strong>');
+								}
+							})
+		</script>
+	</th:block>
+</body>
+</html>

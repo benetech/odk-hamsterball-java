@@ -1,25 +1,15 @@
 package org.benetech.controller;
 
-import java.io.IOException;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.benetech.client.OdkClient;
 import org.benetech.client.OdkClientFactory;
 import org.benetech.util.HttpProxyUtils;
-import org.opendatakit.api.forms.entity.FormUploadResult;
-import org.opendatakit.api.offices.entity.RegionalOffice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class ProxyController {
@@ -43,5 +33,20 @@ public class ProxyController {
     HttpProxyUtils.proxyRequest(request, response, endpointUrl.toString());
   }
   
+  /**
+   * Sometimes we just want to pass through a request to the web service.
+   */
+  @RequestMapping("/tables/{tableId}/export/**")
+  public void proxyExportRequests(HttpServletRequest request, HttpServletResponse response) {
+    
+    // Target endpoint: /odktables/{appId}/tables/{tableId}/export/{format}/showDeleted/{showDeleted}
+    StringBuffer endpointUrl =
+        new StringBuffer(odkClientFactory.getOdkClient().getTableExportProxyEndpoint());
+    logger.info("endpointUrl: " + endpointUrl);
+    String requestUrl = request.getRequestURI().substring(request.getContextPath().length());
+    logger.info("requestUrl: " + requestUrl);
+    endpointUrl.append(requestUrl);
+    HttpProxyUtils.proxyRequest(request, response, endpointUrl.toString());
+  }
 
 }

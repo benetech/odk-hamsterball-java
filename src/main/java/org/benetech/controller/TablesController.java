@@ -55,6 +55,13 @@ public class TablesController {
     return "attachments";
   }
   
+  @GetMapping("/tables/export/{tableId}")
+  public String exportForm(@PathVariable("tableId") String tableId, Model model) {
+    OdkClient odkClient = odkClientFactory.getOdkClient();
+    model.addAttribute("tableId", tableId);
+    return "export";
+  }
+    
   @RequestMapping("/tables/rows/{tableId}")
   public String rows(@PathVariable("tableId") String tableId, Model model) {
 

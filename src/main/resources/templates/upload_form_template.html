@@ -18,29 +18,38 @@
 				<span aria-hidden="true">×</span>
 			</button>
 			<strong th:text="${msg}"></strong>
-			<p th:if="${result != null and result.manifest != null and result.manifest.files != null }">Files uploaded:
+			<p
+				th:if="${result != null and result.manifest != null and result.manifest.files != null }">Files
+				uploaded:
 			<ul th:each="file: ${result.manifest.files}">
 				<li th:text="${file.filename}">File</li>
-			</ul></p>
-			<p th:if="${result != null and result.notProcessedFiles != null}">Files not uploaded
+			</ul>
+			</p>
+			<p th:if="${result != null and result.notProcessedFiles != null}">Files
+				not uploaded
 			<ul th:each="filename: ${result.notProcessedFiles}">
 				<li th:text="${filename}">File</li>
-			</ul></p>
+			</ul>
+			</p>
 		</div>
 
 		<form th:action="@{/tables/upload}" method="post"
-			class="form-horizontal" enctype="multipart/form-data" encoding="multipart/form-data" accept-charset="UTF-8">
+			class="form-horizontal" enctype="multipart/form-data"
+			encoding="multipart/form-data" accept-charset="UTF-8">
 			<fieldset class="form-group">
 				<legend>Zip File</legend>
+				<div id="zipFile-error" class="text-danger"></div>
 				<div class="fileinput fileinput-new" data-provides="fileinput">
-					<span class="btn btn-default btn-file"><span>Select a ZIP
-					file... </span><input type="file"  name="zipFile" /></span> <span class="fileinput-filename"></span><span
-						class="fileinput-new">No file chosen</span>
+					<span class="btn btn-default btn-file"><span>Select a
+							ZIP file... </span><input type="file" name="zipFile" /></span> <span
+						class="fileinput-filename"></span><span class="fileinput-new">No
+						file chosen</span>
 				</div>
 			</fieldset>
 
 			<fieldset class="form-group">
 				<legend>Office</legend>
+				<div id="office-error" class="text-danger"></div>
 				<div class="form-check" th:each="office: ${offices}">
 					<div class="checkbox">
 						<label class="form-check-label"> <input type="checkbox"
@@ -53,7 +62,7 @@
 			</fieldset>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
-					<input class="btn btn-default" type="submit"
+					<input class="btn btn-primary" type="submit"
 						value="Upload Zipped Form"></input>
 				</div>
 			</div>

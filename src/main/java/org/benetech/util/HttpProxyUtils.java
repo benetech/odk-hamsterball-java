@@ -1,5 +1,9 @@
 package org.benetech.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -57,7 +62,7 @@ public class HttpProxyUtils {
     try {
       HttpUriRequest proxiedRequest = createHttpUriRequest(request, endpointUrl);
       proxiedResponse = getHttpClient().execute(proxiedRequest);
-      return  proxiedResponse;
+      return proxiedResponse;
     } catch (URISyntaxException e) {
       logger.error(e);
     } catch (ClientProtocolException e) {
@@ -66,6 +71,41 @@ public class HttpProxyUtils {
       logger.error(e);
     }
     return proxiedResponse;
+  }
+
+  /** 
+   * Forward a regular get request to a web service that returns a file, then intercept that file\.
+   * @param request
+   * @param response
+   * @param endpointUrl
+   * @return
+   */
+  public static File proxyInterceptFileRequest(HttpServletRequest request,
+      HttpServletResponse response, String endpointUrl, String suffix) {
+    HttpResponse proxiedResponse = null;
+    File fileResponse = null;
+    try {
+      HttpUriRequest proxiedRequest = createHttpUriRequest(request, endpointUrl);
+      proxiedResponse = getHttpClient().execute(proxiedRequest);
+      HttpEntity entity = proxiedResponse.getEntity();
+      fileResponse = File.createTempFile("temp", suffix);
+      BufferedInputStream inputStream = new BufferedInputStream(entity.getContent());
+
+      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(fileResponse));
+      int inByte;
+      while ((inByte = inputStream.read()) != -1)
+        outputStream.write(inByte);
+      inputStream.close();
+      outputStream.close();
+
+    } catch (URISyntaxException e) {
+      logger.error(e);
+    } catch (ClientProtocolException e) {
+      logger.error(e);
+    } catch (IOException e) {
+      logger.error(e);
+    }
+    return fileResponse;
   }
 
   private static HttpClient getHttpClient() {
@@ -133,7 +173,7 @@ public class HttpProxyUtils {
       if ("host".equalsIgnoreCase(headerName)) {
         headerValue = targetUri.getHost();
       }
-      rb.addHeader(headerName, headerValue);      
+      rb.addHeader(headerName, headerValue);
     }
 
     HttpUriRequest proxiedRequest = rb.build();
