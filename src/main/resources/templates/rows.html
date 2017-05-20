@@ -6,34 +6,64 @@
 	layout:decorate="~{odk_tables_layout}">
 <th:block layout:fragment="title" th:text="'Rows for ' + ${tableId}"></th:block>
 <body>
+
 	<th:block layout:fragment="odktablescontent">
-		<table class="table" th:if="${rowResourceList.rows != null and not #lists.isEmpty(rowResourceList.rows)}">
+		<table class="table"
+			th:if="${rowResourceList.rows != null and not #lists.isEmpty(rowResourceList.rows)}">
 			<thead>
 				<tr>
-					<th>Row eTag</th>
-					<th>Create User</th>
-					<th>Update User</th>
+
+					<th
+						th:replace="rows/column_heading::colhead ('rowETag','Row eTag', ${sortColumn}, ${ascending})"></th>
+					<th
+						th:replace="rows/column_heading::colhead ('createUser','Create User', ${sortColumn}, ${ascending})"></th>
+					<th
+						th:replace="rows/column_heading::colhead ('lastUpdateUser','Update User', ${sortColumn}, ${ascending})"></th>
+
+
 					<th:block th:each="col: ${rowResourceList.rows[0].values}">
-						<th th:text="${col.column}">User-defined Columns</th>
+						<th
+							th:replace="rows/column_heading::colhead (${col.column},${col.column}, ${sortColumn}, ${ascending})"></th>
+
 					</th:block>
-					<th>Locale</th>
-					<th>Savepoint Type</th>
-					<th>Savepoint Timestamp</th>
-					<th>Savepoint Creator</th>
+					<th
+						th:replace="rows/column_heading::colhead ('locale','Locale', ${sortColumn}, ${ascending})"></th>
+					<th
+						th:replace="rows/column_heading::colhead ('savepointType','Savepoint Type', ${sortColumn}, ${ascending})"></th>
+
+					<th
+						th:replace="rows/column_heading::colhead ('savepointTimestamp','Savepoint Timestamp', ${sortColumn}, ${ascending})"></th>
+					<th
+						th:replace="rows/column_heading::colhead ('savepointCreator','Savepoint	Creator', ${sortColumn}, ${ascending})"></th>
+
 				</tr>
 			</thead>
 			<tfoot>
 				<tr>
-					<th>Row eTag</th>
-					<th>Create User</th>
-					<th>Update User</th>
+
+					<th
+						th:replace="rows/column_heading::colhead ('rowETag','Row eTag', ${sortColumn}, ${ascending})"></th>
+					<th
+						th:replace="rows/column_heading::colhead ('createUser','Create User', ${sortColumn}, ${ascending})"></th>
+					<th
+						th:replace="rows/column_heading::colhead ('lastUpdateUser','Update User', ${sortColumn}, ${ascending})"></th>
+
+
 					<th:block th:each="col: ${rowResourceList.rows[0].values}">
-						<th th:text="${col.column}">User-defined Columns</th>
+						<th
+							th:replace="rows/column_heading::colhead (${col.column},${col.column}, ${sortColumn}, ${ascending})"></th>
+
 					</th:block>
-					<th>Locale</th>
-					<th>Savepoint Type</th>
-					<th>Savepoint Timestamp</th>
-					<th>Savepoint Creator</th>
+					<th
+						th:replace="rows/column_heading::colhead ('locale','Locale', ${sortColumn}, ${ascending})"></th>
+					<th
+						th:replace="rows/column_heading::colhead ('savepointType','Savepoint Type', ${sortColumn}, ${ascending})"></th>
+
+					<th
+						th:replace="rows/column_heading::colhead ('savepointTimestamp','Savepoint Timestamp', ${sortColumn}, ${ascending})"></th>
+					<th
+						th:replace="rows/column_heading::colhead ('savepointCreator','Savepoint	Creator', ${sortColumn}, ${ascending})"></th>
+
 				</tr>
 			</tfoot>
 			<tbody th:each="row: ${rowResourceList.rows}">
@@ -42,7 +72,7 @@
 					<td th:text="${row.createUser}"></td>
 					<td th:text="${row.lastUpdateUser}"></td>
 					<th:block th:each="col: ${row.values}">
-						<td th:text="${col.value}">User-defined Columns</td>
+						<td th:text="${col.value}"></td>
 					</th:block>
 					<td th:text="${row.locale}"></td>
 					<td th:text="${row.savepointType}"></td>

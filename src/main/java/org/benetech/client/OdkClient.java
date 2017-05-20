@@ -219,12 +219,15 @@ public class OdkClient {
 
   }
 
-  public RowResourceList getRowResourceList(String tableId, String schemaETag) {
+  public RowResourceList getRowResourceList(String tableId, String schemaETag, String sortColumn, boolean ascending) {
 
-    String getRowListUrl = getUrl(TABLE_ROWS_ENDPOINT).replace("{tableId}", tableId)
-        .replace("{schemaETag}", schemaETag);
+    StringBuilder getRowListUrl = new StringBuilder(getUrl(TABLE_ROWS_ENDPOINT).replace("{tableId}", tableId)
+        .replace("{schemaETag}", schemaETag));
+    getRowListUrl.append("?sortColumn="+sortColumn);
+    getRowListUrl.append("&ascending="+ascending);
+
     logger.info("Calling " + getRowListUrl);
-    ResponseEntity<RowResourceList> getResponse = restTemplate.exchange(getRowListUrl,
+    ResponseEntity<RowResourceList> getResponse = restTemplate.exchange(getRowListUrl.toString(),
         HttpMethod.GET, null, new ParameterizedTypeReference<RowResourceList>() {});
     RowResourceList tableResource = getResponse.getBody();
     return tableResource;

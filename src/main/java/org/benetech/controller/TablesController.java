@@ -36,7 +36,6 @@ public class TablesController {
 
   private static Log logger = LogFactory.getLog(TablesController.class);
 
-
   @RequestMapping("/tables/manifest/{tableId}")
   public String tables(@PathVariable("tableId") String tableId, Model model) {
 
@@ -72,15 +71,22 @@ public class TablesController {
   }
 
   @RequestMapping("/tables/rows/{tableId}")
-  public String rows(@PathVariable("tableId") String tableId, Model model) {
+  public String rows(@PathVariable("tableId") String tableId,
+      @RequestParam(name = "sortColumn", defaultValue = "savepointTimestamp",
+          required = false) String sortColumn,
+      @RequestParam(name = "ascending", defaultValue = "false", required = false) boolean ascending,
+      Model model) {
 
     OdkClient odkClient = odkClientFactory.getOdkClient();
     TableResource tableResource = odkClient.getTableResource(tableId);
     RowResourceList rowResourceList =
-        odkClient.getRowResourceList(tableId, tableResource.getSchemaETag());
+        odkClient.getRowResourceList(tableId, tableResource.getSchemaETag(), sortColumn, ascending);
     model.addAttribute("tableResource", tableResource);
     model.addAttribute("rowResourceList", rowResourceList);
     model.addAttribute("tableId", tableId);
+    model.addAttribute("ascending", ascending);
+    logger.info("sortColumn: " + sortColumn + " ascending: " + ascending);
+    model.addAttribute("sortColumn", sortColumn);
 
     return "rows";
   }
@@ -116,7 +122,5 @@ public class TablesController {
 
     return "upload_form_template";
   }
-
-
 
 }

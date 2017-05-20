@@ -1,3 +1,15 @@
 #downloadZippedButton {
 	margin-top:20px;
 }
+
+.sortColumn {
+	
+}
+
+.sortColumnAscending::before {
+	content: "\25B2 " /* ▲ */
+}
+
+.sortColumnDescending::before {
+	content: "\25BC " /* ▼ */
+}
