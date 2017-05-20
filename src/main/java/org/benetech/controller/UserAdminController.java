@@ -80,7 +80,7 @@ public class UserAdminController {
     logger.info("Result HTTP status: " + status.name());
     populateDefaultModel(model);
     model.addAttribute("msg", "User " + user.getUsername() + " has been deleted.");
-    model.addAttribute("css", "danger");
+    model.addAttribute("css", "info");
     return "admin_user_grid";
   }
 

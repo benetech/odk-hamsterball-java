@@ -1,0 +1,19 @@
+<script>
+	$('#deleteOfficeModal').on('show.bs.modal', function(event) {
+		var button = $(event.relatedTarget)
+		var officeName = button.data('officename')
+		var officeId = button.data('officeid')
+		var url =  button.data('uri')
+		$('#deleteOfficeDescription').text(officeName + " (" + officeId + ")")
+
+		var modal = $(this)
+		modal.find('input#deleteOfficeId').val(officeId)
+		modal.find('input#deleteOfficeName').val(officeName)
+		modal.find('input#deleteOfficeUri').val(uri)
+	})
+
+	$('#deleteButton').on('click', function(event) {
+		var button = $(event.target); // The clicked button
+		$('#deleteOfficeForm').submit()
+	});
+</script>

@@ -41,6 +41,9 @@ public class OdkClient {
   public static String USER_CURRENT_ENDPOINT = "/users/current";
   public static String USER_CHANGE_PASSWORD = "/users/current/password";
   public static String OFFICES_ENDPOINT = "/offices";
+  public static String OFFICES_DELETE_ENDPOINT = "/offices/{officeId}";
+
+
   public static String FORM_UPLOAD_ENDPOINT = "/forms/{appId}/{odkClientVersion}";
 
   public static String ROLES_GRANTED_ENDPOINT = "/roles/granted";
@@ -80,11 +83,11 @@ public class OdkClient {
   public String getFileProxyEndpoint() {
     return getUrl(TABLE_FILE_PROXY_ENDPOINT);
   }
-  
+
   public String getTableExportProxyEndpoint() {
     return getUrl(TABLE_EXPORT_PROXY_ENDPOINT);
   }
-  
+
   public String getAttachmentProxyEndpoint() {
     return getUrl(TABLE_ATTACHMENT_PROXY_ENDPOINT);
   }
@@ -93,21 +96,47 @@ public class OdkClient {
     return getUrl(FORM_UPLOAD_ENDPOINT);
   }
 
+  public HttpStatus deleteOffice(String officeId) {
+    String deleteUrl =
+        odkUrl.toExternalForm() + OFFICES_DELETE_ENDPOINT.replace("{officeId}", officeId);
+    ResponseEntity<String> getResponse =
+        restTemplate.exchange(deleteUrl, HttpMethod.DELETE, null, String.class);
+    logger.info("Called " + deleteUrl + " and received " + getResponse.getStatusCode());
+
+    return getResponse.getStatusCode();
+  }
+
+  public HttpStatus updateOffice(RegionalOffice office) {
+    String postUrl = odkUrl.toExternalForm() + OFFICES_ENDPOINT;
+
+    HttpEntity<RegionalOffice> postUserEntity = new HttpEntity<>(office);
+    ResponseEntity<RegionalOffice> postResponse =
+        restTemplate.exchange(postUrl, HttpMethod.POST, postUserEntity, RegionalOffice.class);
+    logger.info("Sending " + office.toString());
+    logger.info("Called " + postUrl + " and received " + postResponse.getStatusCode());
+
+    return postResponse.getStatusCode();
+  }
+
+
   public UserEntity getCurrentUser() {
     String getUserUrl = odkUrl.toExternalForm() + USER_CURRENT_ENDPOINT;
     ResponseEntity<UserEntity> getResponse =
         restTemplate.exchange(getUserUrl, HttpMethod.GET, null, UserEntity.class);
+
     return getResponse.getBody();
   }
 
-  
+
   public HttpStatus deleteUser(String username) {
-    String deleteUserUrl = odkUrl.toExternalForm() + ADMIN_DELETE_USER_ENDPOINT.replace("{username}", username);
+    String deleteUserUrl =
+        odkUrl.toExternalForm() + ADMIN_DELETE_USER_ENDPOINT.replace("{username}", username);
     ResponseEntity<UserEntity> getResponse =
         restTemplate.exchange(deleteUserUrl, HttpMethod.DELETE, null, UserEntity.class);
+
     return getResponse.getStatusCode();
   }
-  
+
   public void setCurrentUserPassword(String password) {
     String changePasswordUrl = odkUrl.toExternalForm() + USER_CHANGE_PASSWORD;
     MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
@@ -116,19 +145,20 @@ public class OdkClient {
     ResponseEntity<String> postResponse =
         restTemplate.postForEntity(changePasswordUrl, request, String.class);
   }
-  
+
   public HttpStatus updateUser(UserEntity userEntity) {
     String postUserUrl = odkUrl.toExternalForm() + ADMIN_USERS_ENDPOINT;
 
     HttpEntity<UserEntity> postUserEntity = new HttpEntity<>(userEntity);
     ResponseEntity<UserEntity> postResponse =
         restTemplate.exchange(postUserUrl, HttpMethod.POST, postUserEntity, UserEntity.class);
-    
+
     return postResponse.getStatusCode();
   }
 
   public HttpStatus changePasswordUser(String username, String password) {
-    String postUserUrl = odkUrl.toExternalForm() + ADMIN_CHANGE_PASSWORD.replace("{username}", username);
+    String postUserUrl =
+        odkUrl.toExternalForm() + ADMIN_CHANGE_PASSWORD.replace("{username}", username);
 
     MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
     headers.add("Content-Type", "application/json");
@@ -137,16 +167,16 @@ public class OdkClient {
     // Submit a new user
     ResponseEntity<String> postResponse =
         restTemplate.exchange(postUserUrl, HttpMethod.POST, request, String.class);
-    
+
     return postResponse.getStatusCode();
   }
-  
+
   public List<UserEntityForm> getUserAuthorityGrid() {
     String getUserListUrl = odkUrl.toExternalForm() + ADMIN_USERS_ENDPOINT;
     ResponseEntity<List<UserEntity>> getResponse = restTemplate.exchange(getUserListUrl,
         HttpMethod.GET, null, new ParameterizedTypeReference<List<UserEntity>>() {});
     List<UserEntityForm> entityFormList = new ArrayList<UserEntityForm>();
-    for (UserEntity userEntity: getResponse.getBody()) {
+    for (UserEntity userEntity : getResponse.getBody()) {
       entityFormList.add(new UserEntityForm(userEntity));
     }
     return entityFormList;
@@ -219,12 +249,13 @@ public class OdkClient {
 
   }
 
-  public RowResourceList getRowResourceList(String tableId, String schemaETag, String sortColumn, boolean ascending) {
+  public RowResourceList getRowResourceList(String tableId, String schemaETag, String sortColumn,
+      boolean ascending) {
 
-    StringBuilder getRowListUrl = new StringBuilder(getUrl(TABLE_ROWS_ENDPOINT).replace("{tableId}", tableId)
-        .replace("{schemaETag}", schemaETag));
-    getRowListUrl.append("?sortColumn="+sortColumn);
-    getRowListUrl.append("&ascending="+ascending);
+    StringBuilder getRowListUrl = new StringBuilder(getUrl(TABLE_ROWS_ENDPOINT)
+        .replace("{tableId}", tableId).replace("{schemaETag}", schemaETag));
+    getRowListUrl.append("?sortColumn=" + sortColumn);
+    getRowListUrl.append("&ascending=" + ascending);
 
     logger.info("Calling " + getRowListUrl);
     ResponseEntity<RowResourceList> getResponse = restTemplate.exchange(getRowListUrl.toString(),
@@ -245,8 +276,7 @@ public class OdkClient {
    * @param file
    * @param offices
    * @return
-   * @throws IOException 
-   * File needs to be converted to FileSystemResource before transmission.
+   * @throws IOException File needs to be converted to FileSystemResource before transmission.
    * @see http://stackoverflow.com/questions/41632647/multipart-file-upload-with-spring-resttemplate-and-jackson
    */
   public FormUploadResult uploadFile(MultipartFile file, List<String> offices) throws IOException {

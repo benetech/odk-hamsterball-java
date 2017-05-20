@@ -1,0 +1,44 @@
+
+<!-- Add/Edit Office Modal -->
+<div class="modal fade" id="addEditOfficeModal" tabindex="-1"
+	role="dialog" aria-labelledby="addEditOfficeModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="addEditOfficeModalLabel">Add/Edit
+					Office</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form th:action="@{/admin/offices}" method="post"
+					id="addEditOfficeForm" th:object="${office}">
+					<input type="hidden" name="uri" id="uri"></input>
+
+					<div class="form-group">
+						<label class="control-label" for="officeId"> Office ID: <span
+							id="officeId-error" class="text-danger"></span>
+						</label> <input type="text" name="officeId" id="officeId"
+							class="form-control"></input>
+					</div>
+					<div class="form-group">
+						<label class="control-label" for="name"> Office Name: <span
+							id="officeName-error" class="text-danger"></span>
+						</label> <input type="text" name="name" id="officeName"
+							class="form-control"></input>
+					</div>
+
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary"
+					id="addEditOfficeCloseCancelButton" data-dismiss="modal">Cancel</button>
+				<button name="addEditButton" id="addEditButton" type="button"
+					class="btn btn-primary">Save changes</button>
+			</div>
+		</div>
+	</div>
+</div>

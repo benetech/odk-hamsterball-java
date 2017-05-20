@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{top_menu_layout}">
+<head>
+<link rel="stylesheet" href="/css/modal.css">
+</head>
+
+<th:block layout:fragment="title">Regional Offices</th:block>
+<body>
+	<section layout:fragment="content">
+		<div class="alert alert-warning" role="alert">
+			<strong>Office IDs</strong>
+			<p>Please don't change Office ID values once you've started
+				using them in form data, as the consequences are unknown.</p>
+		</div>
+
+		<div th:if="${msg != null}"
+			th:class="'alert alert-' + ${css} + ' alert-dismissible'"
+			role="alert">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">×</span>
+			</button>
+			<strong th:text="${msg}"></strong>
+		</div>
+		<!-- Button trigger modal -->
+		<button type="button" class="btn btn-default" data-toggle="modal"
+			data-target="#addEditOfficeModal"
+			th:attr="data-officename='',data-officeid='',data-uri='',data-action=add">Add
+			Office</button>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Office ID</th>
+					<th>Office Name</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th>Office ID</th>
+					<th>Office Name</th>
+					<th>Actions</th>
+				</tr>
+			</tfoot>
+			<tbody th:each="office: ${offices}">
+				<tr>
+					<td th:text="${office.officeId}">madison</td>
+					<td th:text="${office.name}">Madison, WI</td>
+					<th><button type="button" class="btn btn-default"
+							data-toggle="modal" data-target="#addEditOfficeModal"
+							th:attr="data-officename=${office.name},data-officeid=${office.officeId},data-uri=${office.uri},data-action=edit">Edit</button>
+						<button type="button" class="btn btn-danger" data-toggle="modal"
+							data-target="#deleteOfficeModal"
+							th:attr="data-officename=${office.name},data-officeid=${office.officeId},data-uri=${office.uri}">Delete</button></th>
+				</tr>
+			</tbody>
+		</table>
+
+		<th:block th:include="office_grid/add_office_modal"></th:block>
+
+		<th:block th:include="office_grid/delete_office_modal"></th:block>
+
+	</section>
+
+	<th:block layout:fragment="bodyend">
+		<th:block th:include="office_grid/add_office_script"></th:block>
+
+		<th:block th:include="office_grid/delete_office_script"></th:block>
+	</th:block>
+</body>
+</html>

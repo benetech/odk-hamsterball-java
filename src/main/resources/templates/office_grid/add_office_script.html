@@ -1,0 +1,103 @@
+<script>
+	$('#addEditOfficeModal')
+			.on(
+					'show.bs.modal',
+					function(event) {
+						var button = $(event.relatedTarget)
+						clearAddEditErrors();
+						resetAddEditModalButtons();
+						var officeName = button.data('officename')
+						var officeId = button.data('officeid')
+						var uri = button.data('uri')
+
+						var action = button.data('action')
+
+						var modal = $(this)
+						modal.find('input#officeId').val(officeId)
+						modal.find('input#officeName').val(officeName)
+						modal.find('input#uri').val(uri)
+
+						if (action == 'add') {
+							$("#officeId-error").text('Choose a short, meaningful, lowercase ID with no symbols or spaces')
+						}
+					})
+
+	function clearAddEditErrors() {
+		$("#addEditOfficeResult").remove();
+		$("#hiddenEditOfficeId").remove();
+
+		$("#officeName-error").text('');
+		$("#officeId-error").text('');
+	}
+
+	function dirtyAddEditModalButtons() {
+		$("#addEditOfficeCloseCancelButton").text("Close");
+		$("#addEditOfficeCloseCancelButton").removeClass("data-dismiss");
+		$("#addEditOfficeCloseCancelButton").removeClass("btn-secondary");
+		$("#addEditOfficeCloseCancelButton").addClass("btn-primary");
+		$("#addEditOfficeCloseCancelButton").on('click', function(event) {
+			// "replace" does not add history item, if we want one for some reason, use "href"
+			window.location.replace("/admin/offices");
+		})
+		$("#addEditButton").addClass("btn-secondary");
+		$("#addEditButton").removeClass("btn-primary");
+	}
+
+	function resetAddEditModalButtons() {
+		$("#addEditOfficeCloseCancelButton").text("Cancel");
+		$("#addEditOfficeCloseCancelButton").addClass("data-dismiss");
+		$("#addEditOfficeCloseCancelButton").addClass("btn-secondary");
+		$("#addEditOfficeCloseCancelButton").removeClass("btn-primary");
+		$("#addEditOfficeCloseCancelButton").prop('onclick', null).off('click');
+		$("#addEditButton").removeClass("btn-secondary");
+		$("#addEditButton").addClass("btn-primary");
+	}
+
+	$('#addEditButton')
+			.on(
+					'click',
+					function(event) {
+						var button = $(event.target); // The clicked button
+						clearAddEditErrors();
+						$
+								.ajax({
+									type : 'POST',
+									url : '/admin/offices',
+									data : $('#addEditOfficeForm').serialize(),
+									success : function(result) {
+										$("#addEditOfficeModal .modal-body")
+												.prepend(
+														'<div id="addEditOfficeResult" class="alert alert-success alert-dismissible" role="alert"/>');
+										$("#addEditOfficeResult")
+												.append(
+														'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
+										$("#addEditOfficeResult").append(
+												'<strong>'
+														+ result.summaryMessage
+														+ '</strong>');
+										dirtyAddEditModalButtons();
+									},
+									error : function(result) {
+										$("#addEditOfficeModal .modal-body")
+												.prepend(
+														'<div id="addEditOfficeResult" class="alert alert-danger alert-dismissible" role="alert"/>');
+										$("#addEditOfficeResult")
+												.append(
+														'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
+										$("#addEditOfficeResult")
+												.append(
+														'<strong>'
+																+ result.responseJSON.summaryMessage
+																+ '</strong>');
+
+										$("#officeName-error")
+												.text(
+														result.responseJSON.errors.name);
+										$("#officeId-error")
+												.text(
+														result.responseJSON.errors.officeId);
+									},
+									dataType : "json"
+								});
+					});
+</script>
