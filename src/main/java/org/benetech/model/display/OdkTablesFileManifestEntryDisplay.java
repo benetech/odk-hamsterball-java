@@ -3,6 +3,9 @@ package org.benetech.model.display;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.benetech.controller.ProxyController;
@@ -37,6 +40,10 @@ public class OdkTablesFileManifestEntryDisplay extends OdkTablesFileManifestEntr
       }
     }
     return relativeUrl;
+  }
+  
+  public boolean isSupportsThumbnail() {
+	  return ArrayUtils.contains(ImageIO.getReaderMIMETypes(), contentType);
   }
 
 

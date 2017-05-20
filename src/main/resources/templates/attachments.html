@@ -30,17 +30,19 @@
 			</tfoot>
 			<tbody th:each="file: ${manifest}">
 				<tr>
-					<td><a th:text="${file.filename}"
-						th:href="@{|/attachment${file.relativeUrl}|}"></a></td>
+					<td><a th:href="@{|/attachment${file.relativeUrl}|}"><img
+							th:if="${file.supportsThumbnail}"
+							th:src="@{|/attachment/thumb${file.relativeUrl}|}"
+							th:alt="@{|Thumbnail for ${file.filename}|}" />
+							<span th:if="${!file.supportsThumbnail}" th:text="${file.filename}"></span></a></td>
 					<td th:text="${file.contentLength}"></td>
 					<td th:text="${file.contentType}"></td>
 					<td th:text="${file.md5hash}"></td>
-					
+
 				</tr>
 			</tbody>
 		</table>
-		<div
-			th:if="${manifest == null or #lists.isEmpty(manifest)}">
+		<div th:if="${manifest == null or #lists.isEmpty(manifest)}">
 			There are no file attachments.</div>
 	</th:block>
 </body>
