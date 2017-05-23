@@ -101,7 +101,7 @@ public class OdkClient {
         odkUrl.toExternalForm() + OFFICES_DELETE_ENDPOINT.replace("{officeId}", officeId);
     ResponseEntity<String> getResponse =
         restTemplate.exchange(deleteUrl, HttpMethod.DELETE, null, String.class);
-    logger.info("Called " + deleteUrl + " and received " + getResponse.getStatusCode());
+    logger.debug("Called " + deleteUrl + " and received " + getResponse.getStatusCode());
 
     return getResponse.getStatusCode();
   }
@@ -112,8 +112,8 @@ public class OdkClient {
     HttpEntity<RegionalOffice> postUserEntity = new HttpEntity<>(office);
     ResponseEntity<RegionalOffice> postResponse =
         restTemplate.exchange(postUrl, HttpMethod.POST, postUserEntity, RegionalOffice.class);
-    logger.info("Sending " + office.toString());
-    logger.info("Called " + postUrl + " and received " + postResponse.getStatusCode());
+    logger.debug("Sending " + office.toString());
+    logger.debug("Called " + postUrl + " and received " + postResponse.getStatusCode());
 
     return postResponse.getStatusCode();
   }
@@ -213,7 +213,7 @@ public class OdkClient {
   public OdkTablesFileManifest getTableManifest(String tableId) {
 
     String getManifestUrl = getUrl(TABLE_MANIFEST_ENDPOINT).replace("{tableId}", tableId);
-    logger.info("Calling " + getManifestUrl);
+    logger.debug("Calling " + getManifestUrl);
 
     ResponseEntity<OdkTablesFileManifest> getResponse = restTemplate.exchange(getManifestUrl,
         HttpMethod.GET, null, new ParameterizedTypeReference<OdkTablesFileManifest>() {});
@@ -227,7 +227,7 @@ public class OdkClient {
 
     String getManifestUrl = getUrl(TABLE_ATTACHMENT_MANIFEST_ENDPOINT).replace("{tableId}", tableId)
         .replace("{schemaETag}", schemaETag);
-    logger.info("Calling " + getManifestUrl);
+    logger.debug("Calling " + getManifestUrl);
 
     ResponseEntity<OdkTablesFileManifest> getResponse = restTemplate.exchange(getManifestUrl,
         HttpMethod.GET, null, new ParameterizedTypeReference<OdkTablesFileManifest>() {});
@@ -240,7 +240,7 @@ public class OdkClient {
   public TableResource getTableResource(String tableId) {
 
     String getTableUrl = getUrl(TABLES_ENDPOINT) + "/" + tableId;
-    logger.info("Calling " + getTableUrl);
+    logger.debug("Calling " + getTableUrl);
 
     ResponseEntity<TableResource> getResponse = restTemplate.exchange(getTableUrl, HttpMethod.GET,
         null, new ParameterizedTypeReference<TableResource>() {});
@@ -257,7 +257,7 @@ public class OdkClient {
     getRowListUrl.append("?sortColumn=" + sortColumn);
     getRowListUrl.append("&ascending=" + ascending);
 
-    logger.info("Calling " + getRowListUrl);
+    logger.debug("Calling " + getRowListUrl);
     ResponseEntity<RowResourceList> getResponse = restTemplate.exchange(getRowListUrl.toString(),
         HttpMethod.GET, null, new ParameterizedTypeReference<RowResourceList>() {});
     RowResourceList tableResource = getResponse.getBody();

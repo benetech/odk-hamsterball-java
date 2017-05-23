@@ -74,10 +74,7 @@ public class UserAdminController {
   @PostMapping("/admin/users/delete")
   public String deleteUser(@ModelAttribute("user") UserEntityForm user, Model model) {
     OdkClient odkClient = odkClientFactory.getOdkClient();
-    logger.info("Updating user " + user);
-
     HttpStatus status = odkClient.deleteUser(user.getUsername());
-    logger.info("Result HTTP status: " + status.name());
     populateDefaultModel(model);
     model.addAttribute("msg", "User " + user.getUsername() + " has been deleted.");
     model.addAttribute("css", "info");

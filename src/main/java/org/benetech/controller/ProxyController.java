@@ -35,7 +35,7 @@ public class ProxyController {
   public void proxyFileRequests(HttpServletRequest request, HttpServletResponse response) {
     StringBuffer endpointUrl =
         new StringBuffer(odkClientFactory.getOdkClient().getFileProxyEndpoint());
-    logger.info("endpointUrl: " + endpointUrl);
+    logger.debug("endpointUrl: " + endpointUrl);
     String requestUrl = request.getRequestURI().substring(request.getContextPath().length() + "/file".length());
     logger.info("requestUrl: " + requestUrl);
     endpointUrl.append(requestUrl);
@@ -46,7 +46,7 @@ public class ProxyController {
   public void proxyAttachmentRequests(HttpServletRequest request, HttpServletResponse response) {
     StringBuffer endpointUrl =
         new StringBuffer(odkClientFactory.getOdkClient().getAttachmentProxyEndpoint());
-    logger.info("endpointUrl: " + endpointUrl);
+    logger.debug("endpointUrl: " + endpointUrl);
     String requestUrl = request.getRequestURI().substring(request.getContextPath().length() + "/attachment".length());
     logger.info("requestUrl: " + requestUrl);
     endpointUrl.append(requestUrl);
@@ -57,7 +57,7 @@ public class ProxyController {
   public void proxyAttachmentThumbnailRequests(HttpServletRequest request, HttpServletResponse response) {
     StringBuffer endpointUrl =
         new StringBuffer(odkClientFactory.getOdkClient().getAttachmentProxyEndpoint());
-    logger.info("endpointUrl: " + endpointUrl);
+    logger.debug("endpointUrl: " + endpointUrl);
     String requestUrl = request.getRequestURI().substring(request.getContextPath().length() + "/attachment/thumb".length());
     logger.info("requestUrl: " + requestUrl);
     endpointUrl.append(requestUrl);
@@ -75,7 +75,7 @@ public class ProxyController {
     // Target endpoint: /odktables/{appId}/tables/{tableId}/export/{format}/showDeleted/{showDeleted}
     StringBuffer endpointUrl =
         new StringBuffer(odkClientFactory.getOdkClient().getTableExportProxyEndpoint());
-    logger.info("endpointUrl: " + endpointUrl);
+    logger.debug("endpointUrl: " + endpointUrl);
     String requestUrl = request.getRequestURI().substring(request.getContextPath().length());
     logger.info("requestUrl: " + requestUrl);
     endpointUrl.append(requestUrl);

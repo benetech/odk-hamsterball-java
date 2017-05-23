@@ -66,11 +66,11 @@ public class UserAdminControllerAjax {
     }
 
     OdkClient odkClient = odkClientFactory.getOdkClient();
-    logger.info("Updating user " + passwordForm.getUsername());
+    logger.debug("Updating user " + passwordForm.getUsername());
 
     HttpStatus status =
         odkClient.changePasswordUser(passwordForm.getUsername(), passwordForm.getPassword1());
-    logger.info("Result HTTP status: " + status.name());
+    logger.debug("Result HTTP status: " + status.name());
     AjaxFormResponse response = new AjaxFormResponse("Password updated for user " + passwordForm.getUsername() + ".");
     return ResponseEntity.ok(response);
   }
@@ -86,7 +86,7 @@ public class UserAdminControllerAjax {
       return ResponseEntity.badRequest().body(response);
     }
     OdkClient odkClient = odkClientFactory.getOdkClient();
-    logger.info("Updating user " + user);
+    logger.debug("Updating user " + user);
     UserEntity userEntity = (UserEntity) user;
     HttpStatus status = odkClient.updateUser(userEntity);
     AjaxFormResponse response = new AjaxFormResponse("User " + user.getUsername() + " updated.");

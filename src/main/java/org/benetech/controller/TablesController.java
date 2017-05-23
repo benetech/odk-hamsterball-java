@@ -85,7 +85,6 @@ public class TablesController {
     model.addAttribute("rowResourceList", rowResourceList);
     model.addAttribute("tableId", tableId);
     model.addAttribute("ascending", ascending);
-    logger.info("sortColumn: " + sortColumn + " ascending: " + ascending);
     model.addAttribute("sortColumn", sortColumn);
 
     return "rows";

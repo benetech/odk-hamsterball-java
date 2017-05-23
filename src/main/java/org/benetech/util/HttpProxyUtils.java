@@ -80,7 +80,7 @@ public class HttpProxyUtils {
 
 	/**
 	 * Forward a regular get request to a web service that returns a file, then
-	 * intercept that file\.
+	 * intercept that file.
 	 * 
 	 * @param request
 	 * @param response
@@ -168,9 +168,8 @@ public class HttpProxyUtils {
 		OutputStream os = null;
 		InputStream is = null;
 		try {
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-			ImageIO.write(thumbnail.getThumbnail(), thumbnail.getExtension(), byteArrayOutputStream);
-			is = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+			is = new ByteArrayInputStream(thumbnail.getThumbnail());
+			logger.debug("Byte array length (thumbnail file size): " + thumbnail.getThumbnail().length);
 			os = response.getOutputStream();
 			IOUtils.copy(is, os);
 		} catch (IOException e) {

@@ -1,8 +1,5 @@
 package org.benetech.thumbnail;
 
-import java.awt.image.BufferedImage;
-
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -15,20 +12,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class AttachmentThumbnailRepositoryImpl implements ThumbnailRepository {
 
-	private static Log logger = LogFactory.getLog(AttachmentThumbnailRepositoryImpl.class);
+  private static Log logger = LogFactory.getLog(AttachmentThumbnailRepositoryImpl.class);
 
-	@Cacheable(cacheNames = "thumbnails", key = "#requestUrl")
-	@Override
-	public Thumbnail get(String requestUrl, HttpServletRequest request, String endpointUrl) {
-		logger.info("Accepted readers");
+  @Cacheable(cacheNames = "thumbnails", key = "#requestUrl")
+  @Override
+  public Thumbnail get(String requestUrl, HttpServletRequest request, String endpointUrl) {
 
-		FileWrapper fileWrapper = HttpProxyUtils.proxyInterceptFileRequest(request, endpointUrl.toString());
+    FileWrapper fileWrapper =
+        HttpProxyUtils.proxyInterceptFileRequest(request, endpointUrl.toString());
 
-		BufferedImage bufferedImage = ThumbnailUtils.thumbnail(fileWrapper.getFile());
+    // byteArray is already compressed for compressible formats.
+    byte[] byteArray = ThumbnailUtils.thumbnail(fileWrapper);
 
-		return new Thumbnail(fileWrapper.getContentType(), fileWrapper.getExtension(), requestUrl,
-				bufferedImage);
+    return new Thumbnail(fileWrapper.getContentType(), fileWrapper.getExtension(), requestUrl,
+        byteArray);
 
-	}
+  }
+
 
 }

@@ -51,7 +51,7 @@ public class OfficeAdminControllerAjax {
       return ResponseEntity.badRequest().body(response);
     }
     OdkClient odkClient = odkClientFactory.getOdkClient();
-    logger.info("Updating office " + office.getOfficeId());
+    logger.debug("Updating office " + office.getOfficeId());
     HttpStatus status = odkClient.updateOffice(office);
     AjaxFormResponse response = new AjaxFormResponse(
         "Office " + office.getName() + " (" + office.getOfficeId() + ") updated.");

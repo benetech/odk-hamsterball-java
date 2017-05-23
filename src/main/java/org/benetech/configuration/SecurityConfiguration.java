@@ -28,8 +28,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     http.authorizeRequests().antMatchers("/css/**").permitAll() 
         .antMatchers("/images/**").permitAll().antMatchers("/favicon.ico").permitAll().anyRequest()
         .authenticated().and().formLogin().loginPage("/login").failureUrl("/login?error")
-        .permitAll().and().logout().permitAll().and().exceptionHandling()
-        .accessDeniedPage("/login?error");
+        .permitAll().and().logout().permitAll();
+    //.and().exceptionHandling()        .accessDeniedPage("/login?error");
 
   }
 

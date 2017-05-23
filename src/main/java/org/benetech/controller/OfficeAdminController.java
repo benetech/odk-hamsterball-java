@@ -60,10 +60,10 @@ public class OfficeAdminController {
   @PostMapping("/admin/offices/delete")
   public String deleteOffice(@ModelAttribute("office") RegionalOffice office, Model model) {
     OdkClient odkClient = odkClientFactory.getOdkClient();
-    logger.info("Updating office " + office.getOfficeId());
+    logger.debug("Updating office " + office.getOfficeId());
 
     HttpStatus status = odkClient.deleteOffice(office.getOfficeId());
-    logger.info("Result HTTP status: " + status.name());
+    logger.debug("Result HTTP status: " + status.name());
     populateDefaultModel(model);
     model.addAttribute("msg",
         "Office " + office.getName() + " (" + office.getOfficeId() + ") has been deleted.");

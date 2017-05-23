@@ -7,11 +7,11 @@ public class Thumbnail {
 	private String extension;
 	private String key;
 	
-	private BufferedImage thumbnail;
+	private byte[] thumbnail;
 	
 	
 
-	public Thumbnail(String contentType, String extension, String key, BufferedImage thumbnail) {
+	public Thumbnail(String contentType, String extension, String key, byte[] thumbnail) {
 		this.contentType = contentType;
 		this.extension = extension;
 		this.key = key;
@@ -42,11 +42,11 @@ public class Thumbnail {
 		this.key = key;
 	}
 
-	public BufferedImage getThumbnail() {
+	public byte[] getThumbnail() {
 		return thumbnail;
 	}
 
-	public void setThumbnail(BufferedImage thumbnail) {
+	public void setThumbnail(byte[] thumbnail) {
 		this.thumbnail = thumbnail;
 	}
 	

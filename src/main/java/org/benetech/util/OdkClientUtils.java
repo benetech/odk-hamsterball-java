@@ -28,7 +28,7 @@ public class OdkClientUtils {
         restTemplate = (RestTemplate) userDetails.get(GeneralConsts.ODK_REST_CLIENT);
       }
     } catch (ClassCastException e) {
-      logger.info("Unable to get REST template for this user.");
+      logger.error("Unable to get REST template for this user.");
     }
     return restTemplate;
   }
