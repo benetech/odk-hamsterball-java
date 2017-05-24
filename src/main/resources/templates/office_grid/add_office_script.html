@@ -12,14 +12,28 @@
 
 						var action = button.data('action')
 
+
+						$("#officeIdFormGroup").empty();
+						if (action == 'add') {
+							$("#officeId-error").text('Choose a short, meaningful, lowercase ID with no symbols or spaces')
+							
+							$("#officeIdFormGroup").append('<label id="officeIdLabel" class="control-label" for="officeId">Office ID:</label>');
+							$("#officeIdLabel").append('<span id="officeId-error" class="text-danger"></span>');
+							$("#officeIdFormGroup").append('<input type="text" name="officeId" id="officeId" class="form-control"></input>');
+						} else {
+							
+							$("#officeIdFormGroup").append('<span id="officeIdLabel" class="label-look-span">Office ID: </span>');
+							$("#officeIdFormGroup").append( ' ' + officeId );
+
+							$("#officeIdFormGroup").append('<input type="hidden" name="officeId" id="officeId" ></input>');
+
+
+						}
+						
 						var modal = $(this)
 						modal.find('input#officeId').val(officeId)
 						modal.find('input#officeName').val(officeName)
 						modal.find('input#uri').val(uri)
-
-						if (action == 'add') {
-							$("#officeId-error").text('Choose a short, meaningful, lowercase ID with no symbols or spaces')
-						}
 					})
 
 	function clearAddEditErrors() {

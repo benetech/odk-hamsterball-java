@@ -18,11 +18,7 @@
 					id="addEditOfficeForm" th:object="${office}">
 					<input type="hidden" name="uri" id="uri"></input>
 
-					<div class="form-group">
-						<label class="control-label" for="officeId"> Office ID: <span
-							id="officeId-error" class="text-danger"></span>
-						</label> <input type="text" name="officeId" id="officeId"
-							class="form-control"></input>
+					<div class="form-group" id="officeIdFormGroup">
 					</div>
 					<div class="form-group">
 						<label class="control-label" for="name"> Office Name: <span

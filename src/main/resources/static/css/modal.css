@@ -6,3 +6,7 @@ div.modal-header h5 {
 div.modal-body form fieldset legend {
 	margin-bottom: 5px;
 }
+
+.label-look-span {
+	    font-weight: 700;
+}

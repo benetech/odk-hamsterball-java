@@ -11,12 +11,6 @@
 <th:block layout:fragment="title">Regional Offices</th:block>
 <body>
 	<section layout:fragment="content">
-		<div class="alert alert-warning" role="alert">
-			<strong>Office IDs</strong>
-			<p>Please don't change Office ID values once you've started
-				using them in form data, as the consequences are unknown.</p>
-		</div>
-
 		<div th:if="${msg != null}"
 			th:class="'alert alert-' + ${css} + ' alert-dismissible'"
 			role="alert">
