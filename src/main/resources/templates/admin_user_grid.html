@@ -23,7 +23,7 @@
 		<!-- Button trigger modal -->
 		<button type="button" class="btn btn-default" data-toggle="modal"
 			data-target="#addEditUserModal"
-			th:attr="data-fullname='',data-username='',data-officeid='',data-roles=''">Add
+			th:attr="data-fullname='',data-username='',data-officeid='',data-roles='',data-action='add'">Add
 			User</button>
 		<table class="table">
 			<thead>
@@ -60,7 +60,7 @@
 					</th:block>
 					<th><button type="button" class="btn btn-default"
 							data-toggle="modal" data-target="#addEditUserModal"
-							th:attr="data-fullname=${user.fullName},data-username=${user.username},data-officeid=${user.officeId},data-roles=${user.roles}">Edit</button>
+							th:attr="data-action='edit',data-fullname=${user.fullName},data-username=${user.username},data-officeid=${user.officeId},data-roles=${user.roles}">Edit</button>
 						<button th:if="${user.username != 'anonymous'}" type="button"
 							class="btn btn-default" data-toggle="modal"
 							data-target="#changePasswordModal"
