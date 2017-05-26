@@ -1,136 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.2.RELEASE</version>
-    </parent>
-    <artifactId>odk-hamsterball-java</artifactId>
-    <name>Open Data Kit HamsterBall GUI</name>
-    <version>1.0.0-SNAPSHOT</version>
-    <description>Client for Open Data Kit Hamster using Java + Spring Boot</description>
-    <url>http://benetech.org/</url>
-    <organization>
-        <name>Benetech</name>
-        <url>http://benetech.org</url>
-    </organization>
-    <properties>
-        <java.version>1.8</java.version>
-        <thymeleaf.version>3.0.6.RELEASE</thymeleaf.version>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.2.RELEASE</version>
+	</parent>
+	<artifactId>odk-hamsterball-java</artifactId>
+	<name>Open Data Kit HamsterBall GUI</name>
+	<version>1.0.0-SNAPSHOT</version>
+	<description>Client for Open Data Kit Hamster using Java + Spring Boot</description>
+	<url>http://benetech.org/</url>
+	<organization>
+		<name>Benetech</name>
+		<url>http://benetech.org</url>
+	</organization>
+	<properties>
+		<java.version>1.8</java.version>
+		<thymeleaf.version>3.0.6.RELEASE</thymeleaf.version>
 
-        <thymeleaf-layout-dialect.version>2.2.1</thymeleaf-layout-dialect.version>
-    </properties>
-    <repositories>
-        <!-- We're using jitpack to download odk-tables-api-hamster -->
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <!-- main repository -->
-        <repository>
-            <id>central</id>
-            <name>Maven Central Repository</name>
-            <layout>default</layout>
-            <url>http://repo.maven.apache.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <dependencies>
-        <dependency>
-            <groupId>com.github.Benetech</groupId>
-            <artifactId>odk-tables-api-hamster</artifactId>
-            <version>1.2-SNAPSHOT</version>
-            <exclusions>
-                <!-- Spring boot includes jcl-over-slf4j (conflicts) by default -->
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-jcl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.github.benetech</groupId>
-            <artifactId>odk-hamster-digest-auth-client</artifactId>
-            <version>1.0.1-RELEASE</version>
-        </dependency>
-        <!-- <dependency> -->
-        <!-- <groupId>org.opendatakit</groupId> -->
-        <!-- <artifactId>odk-tables-api-hamster</artifactId> -->
-        <!-- <version>1.1</version> -->
-        <!-- <exclusions> -->
-        <!-- Spring boot includes jcl-over-slf4j (conflicts) by default -->
-        <!-- <exclusion> -->
-        <!-- <groupId>org.slf4j</groupId> -->
-        <!-- <artifactId>slf4j-jcl</artifactId> -->
-        <!-- </exclusion> -->
-        <!-- </exclusions> -->
-        <!-- </dependency> -->
-        <!-- Compile -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.thymeleaf.extras</groupId>
-            <artifactId>thymeleaf-extras-springsecurity4</artifactId>
-            <version>3.0.2.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-        <!-- Test -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <artifactId>odk-hamster</artifactId>
-            <groupId>org.benetech</groupId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>test</scope>
-            <classifier>exec</classifier>
-        </dependency>
-       <!--  <dependency>
-            <groupId>ru.yandex.qatools.embed</groupId>
-            <artifactId>postgresql-embedded</artifactId>
-            <version>2.1</version>
-            <scope>test</scope>
-        </dependency>-->
-    </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+		<thymeleaf-layout-dialect.version>2.2.1</thymeleaf-layout-dialect.version>
+	</properties>
+	<repositories>
+		<!-- We're using jitpack to download odk-tables-api-hamster -->
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+		<!-- main repository -->
+		<repository>
+			<id>central</id>
+			<name>Maven Central Repository</name>
+			<layout>default</layout>
+			<url>http://repo.maven.apache.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>com.github.Benetech</groupId>
+			<artifactId>odk-tables-api-hamster</artifactId>
+			<version>1.2-SNAPSHOT</version>
+			<exclusions>
+				<!-- Spring boot includes jcl-over-slf4j (conflicts) by default -->
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-jcl</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.github.benetech</groupId>
+			<artifactId>odk-hamster-digest-auth-client</artifactId>
+			<version>1.0.1-RELEASE</version>
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.opendatakit</groupId> -->
+		<!-- <artifactId>odk-tables-api-hamster</artifactId> -->
+		<!-- <version>1.1</version> -->
+		<!-- <exclusions> -->
+		<!-- Spring boot includes jcl-over-slf4j (conflicts) by default -->
+		<!-- <exclusion> -->
+		<!-- <groupId>org.slf4j</groupId> -->
+		<!-- <artifactId>slf4j-jcl</artifactId> -->
+		<!-- </exclusion> -->
+		<!-- </exclusions> -->
+		<!-- </dependency> -->
+		<!-- Compile -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity4</artifactId>
+			<version>3.0.2.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+		</dependency>
+		<!-- Test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ru.yandex.qatools.embed</groupId>
+			<artifactId>postgresql-embedded</artifactId>
+			<version>2.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>3.4.0</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

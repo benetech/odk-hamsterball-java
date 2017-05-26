@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Profile({"default","unittest"})
+@Profile({"default","unittest","integrationtest"})
 @ComponentScan(basePackages = {"org.benetech"})
 public class WebClientConfiguration {
 

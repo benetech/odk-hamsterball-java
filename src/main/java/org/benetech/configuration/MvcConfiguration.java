@@ -15,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
-@Profile({"default","unittest"})
+@Profile({"default","unittest","integrationtest"})
 @ComponentScan(basePackages = {"org.benetech"})
 public class MvcConfiguration extends WebMvcConfigurerAdapter {
   

@@ -13,9 +13,9 @@
 		<p th:if="${officeId != null}" th:text="'Office ID: ' + ${officeId}"></p>
 
 		<h2>Roles</h2>
+		<!--/* Why double-underscores? 
+		 http://stackoverflow.com/questions/29755615/how-to-access-a-map-in-thymeleaf-spring-dialect-when-the-key-is-changing */-->
 		<ul th:each="role: ${roles}">
-		<!-- Why double-underscores? 
-		/* http://stackoverflow.com/questions/29755615/how-to-access-a-map-in-thymeleaf-spring-dialect-when-the-key-is-changing */ -->
 			<li th:text="${roleDescriptions[__${role}__]}">Role Name</li>
 		</ul>
 	</section>
