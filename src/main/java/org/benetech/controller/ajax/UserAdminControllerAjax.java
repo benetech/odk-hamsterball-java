@@ -7,8 +7,11 @@ import org.benetech.ajax.AjaxFormResponseFactory;
 import org.benetech.client.OdkClient;
 import org.benetech.client.OdkClientFactory;
 import org.benetech.model.form.ChangePasswordAdminForm;
+import org.benetech.model.form.ChangePasswordForm;
+import org.benetech.model.form.NewUserEntityForm;
 import org.benetech.model.form.UserEntityForm;
 import org.benetech.validator.ChangePasswordAdminFormValidator;
+import org.benetech.validator.NewUserEntityFormValidator;
 import org.benetech.validator.UserEntityFormValidator;
 import org.opendatakit.api.users.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +35,15 @@ public class UserAdminControllerAjax {
 
   @Autowired
   OdkClientFactory odkClientFactory;
+  
+  @Autowired
+  NewUserEntityFormValidator newUserEntityFormValidator;
 
   @Autowired
   UserEntityFormValidator userEntityFormValidator;
 
   @Autowired
-  ChangePasswordAdminFormValidator ChangePasswordAdminFormValidator;
+  ChangePasswordAdminFormValidator changePasswordAdminFormValidator;
   
   @Autowired
   AjaxFormResponseFactory responseFactory;
@@ -46,10 +52,15 @@ public class UserAdminControllerAjax {
   protected void initUserBinder(WebDataBinder binder) {
     binder.setValidator(userEntityFormValidator);
   }
+  
+  @InitBinder("newuser")
+  protected void initNewUserBinder(WebDataBinder binder) {
+    binder.setValidator(newUserEntityFormValidator);
+  }
 
   @InitBinder("passwordForm")
   protected void initPasswordBinder(WebDataBinder binder) {
-    binder.setValidator(ChangePasswordAdminFormValidator);
+    binder.setValidator(changePasswordAdminFormValidator);
   }
 
   @Secured({"ROLE_SITE_ACCESS_ADMIN"})
@@ -76,8 +87,8 @@ public class UserAdminControllerAjax {
   }
   
   @Secured({"ROLE_SITE_ACCESS_ADMIN"})
-  @PostMapping(value="/admin/users", produces = "application/json")
-  public ResponseEntity<?> addUpdateUser(@ModelAttribute("user") @Validated UserEntityForm user,
+  @PostMapping(value="/admin/users/edit", produces = "application/json")
+  public ResponseEntity<?> editUser(@ModelAttribute("user") @Validated UserEntityForm user,
       BindingResult bindingResult, Model model) {
     if (bindingResult.hasErrors()) {
       AjaxFormResponse response =
@@ -87,9 +98,30 @@ public class UserAdminControllerAjax {
     }
     OdkClient odkClient = odkClientFactory.getOdkClient();
     logger.debug("Updating user " + user);
-    UserEntity userEntity = (UserEntity) user;
+    UserEntity userEntity = user.getUserEntity();
     HttpStatus status = odkClient.updateUser(userEntity);
     AjaxFormResponse response = new AjaxFormResponse("User " + user.getUsername() + " updated.");
+    return ResponseEntity.ok(response);
+  }
+  
+  @Secured({"ROLE_SITE_ACCESS_ADMIN"})
+  @PostMapping(value="/admin/users/add", produces = "application/json")
+  public ResponseEntity<?> addUser(@ModelAttribute("newuser") @Validated NewUserEntityForm newuser,
+      BindingResult bindingResult, Model model) {
+    if (bindingResult.hasErrors()) {
+      AjaxFormResponse response =
+          responseFactory.getAjaxFormResponse(bindingResult, "Please correct errors in the form.");
+
+      return ResponseEntity.badRequest().body(response);
+    }
+    OdkClient odkClient = odkClientFactory.getOdkClient();
+    logger.debug("Updating user " + newuser);
+    UserEntity userEntity = newuser.getUserEntity();
+    HttpStatus status = odkClient.updateUser(userEntity);
+    ChangePasswordForm passwordForm = newuser.getChangePasswordForm();
+    status =
+        odkClient.changePasswordUser(newuser.getUsername(), passwordForm.getPassword1());
+    AjaxFormResponse response = new AjaxFormResponse("User " + newuser.getUsername() + " created.");
     return ResponseEntity.ok(response);
   }
 }

@@ -10,8 +10,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class UserEntityForm extends UserEntity {
 
-  
-  
   public UserEntityForm() {
     super();
   }
@@ -25,16 +23,19 @@ public class UserEntityForm extends UserEntity {
   }
 
   public UserEntityForm(UserEntity userEntity) {
-    super(userEntity.getUserId(), userEntity.getFullName(), userEntity.getOfficeId(), userEntity.getRoles());
+    super(userEntity.getUserId(), userEntity.getFullName(), userEntity.getOfficeId(),
+        userEntity.getRoles());
   }
 
-  @JsonIgnore
-  public String getUsername() {
+  public UserEntity getUserEntity() {
+    return new UserEntity(this.getUserId(), this.getFullName(), this.getOfficeId(),
+        this.getRoles());
+  }
 
+  public String getUsername() {
     return UserUtils.idToUsername(getUserId());
   }
 
-  @JsonIgnore
   public void setUsername(String username) {
     // We can't change anonymous username.
     if (!username.equals("anonymous")) {

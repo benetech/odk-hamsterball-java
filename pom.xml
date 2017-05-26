@@ -102,6 +102,19 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <artifactId>odk-hamster</artifactId>
+            <groupId>org.benetech</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+            <classifier>exec</classifier>
+        </dependency>
+       <!--  <dependency>
+            <groupId>ru.yandex.qatools.embed</groupId>
+            <artifactId>postgresql-embedded</artifactId>
+            <version>2.1</version>
+            <scope>test</scope>
+        </dependency>-->
     </dependencies>
     <build>
         <plugins>

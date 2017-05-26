@@ -1,5 +1,6 @@
 <script>
 	$('#addEditUserModal').on('show.bs.modal', function(event) {
+		$('#changePasswordSubForm').remove();
 		var button = $(event.relatedTarget)
 		clearAddEditErrors();
 		resetAddEditModalButtons();
@@ -13,7 +14,7 @@
 			roles = '';
 		}
 
-		setUsernameField(username, action)
+		setAddOrEdit(username, action)
 
 		var modal = $(this)
 		modal.find('input#fullName').val(fullName)
@@ -38,17 +39,24 @@
 
 	})
 
-	function setUsernameField(username, action) {
+	function setAddOrEdit(username, action) {
 		$("#usernameFormGroup").empty();
+		$("#addUserChangePasswordSubForm").empty();
+
 		if (action == 'add') {
 			$("#usernameFormGroup")
 					.append(
-							'<label id="usernameLabel" class="control-label" for="officeId">Username:</label>');
+							'<label id="usernameLabel" class="control-label" for="officeId">Username: </label>');
 			$("#usernameLabel").append(
-					'<span id="username-error" class="text-danger"></span>');
+					' <span id="username-error" class="text-danger"></span>');
 			$("#usernameFormGroup")
 					.append(
 							'<input type="text" name="username" id="username" class="form-control"></input>');
+
+			// Insert shared password fields
+			var passwordSubForm = getChangePasswordSubform();
+			$("#addUserChangePasswordSubFormTarget").append(passwordSubForm);
+			$("#addEditButton").data("action", "add");
 		} else {
 			$("#usernameFormGroup")
 					.append(
@@ -57,6 +65,8 @@
 			$("#usernameFormGroup")
 					.append(
 							'<input type="hidden" name="username" id="username" ></input>');
+			$("#addEditButton").data("action", "edit");
+
 		}
 		$('input#username').val(username)
 
@@ -68,6 +78,9 @@
 		$("#fullname-error").text('');
 		$("#roles-error").text('');
 		$("#office-error").text('');
+		$("#password1-error").text('');
+		$("#password2-error").text('');
+		
 	}
 
 	// Change cancel button to close, make close button reload page and reread web service
@@ -100,11 +113,13 @@
 					'click',
 					function(event) {
 						var button = $(event.target); // The clicked button
+						var action = button.data('action')
+
 						clearAddEditErrors();
 						$
 								.ajax({
 									type : 'POST',
-									url : '/admin/users',
+									url : '/admin/users/' + action,
 									data : $('#addEditUserForm').serialize(),
 									success : function(result) {
 										$("#addEditUserModal .modal-body")
@@ -119,7 +134,9 @@
 														+ '</strong>');
 										// Once the username is set, don't allow updates
 										var form = $('#addEditUserForm');
-										setUsernameField(form.find('input#username').val(), 'edit');
+										setAddOrEdit(form
+												.find('input#username').val(),
+												'edit');
 										dirtyAddEditModalButtons();
 									},
 									error : function(result) {
@@ -143,9 +160,15 @@
 										$("#roles-error")
 												.text(
 														result.responseJSON.errors.roles);
-										$("#offices-error")
+										$("#office-error")
 												.text(
 														result.responseJSON.errors.officeId);
+										$("#password1-error")
+										.text(
+												result.responseJSON.errors.password1);
+										$("#password2-error")
+										.text(
+												result.responseJSON.errors.password2);
 									},
 									dataType : "json"
 								});

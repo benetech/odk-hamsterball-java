@@ -17,8 +17,8 @@
 						if (action == 'add') {
 							$("#officeId-error").text('Choose a short, meaningful, lowercase ID with no symbols or spaces')
 							
-							$("#officeIdFormGroup").append('<label id="officeIdLabel" class="control-label" for="officeId">Office ID:</label>');
-							$("#officeIdLabel").append('<span id="officeId-error" class="text-danger"></span>');
+							$("#officeIdFormGroup").append('<label id="officeIdLabel" class="control-label" for="officeId">Office ID: </label>');
+							$("#officeIdLabel").append(' <span id="officeId-error" class="text-danger"></span>');
 							$("#officeIdFormGroup").append('<input type="text" name="officeId" id="officeId" class="form-control"></input>');
 						} else {
 							
