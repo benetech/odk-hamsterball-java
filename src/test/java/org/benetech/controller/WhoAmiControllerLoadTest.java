@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @UnitTestConfig
 @SpringBootTest
-public class WhoAmiControllerTest {
+public class WhoAmiControllerLoadTest {
 
   @Autowired
   private WhoAmIController controller;
@@ -23,6 +23,7 @@ public class WhoAmiControllerTest {
   @Test
   public void contextLoads() throws Exception {
     assertThat(controller,notNullValue());
+    
   }
 
 }

@@ -138,4 +138,5 @@
 			</plugin>
 		</plugins>
 	</build>
+	<groupId>org.benetech</groupId>
 </project>
