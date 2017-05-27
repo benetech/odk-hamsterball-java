@@ -68,7 +68,7 @@
 					</div>
 					<ul class="nav navbar-nav navbar-right">
 						<li><a href="#">Logged in as <span id="currentLoggedInUser"
-								th:text="${currentUser.fullName}">Javier Cáceres</span></a></li>
+								th:text="${currentUser != null} ? ${currentUser.fullName} : 'Someone Mysterious'">Javier Cáceres</span></a></li>
 					</ul>
 
 				</div>

@@ -50,10 +50,13 @@ import ru.yandex.qatools.embed.postgresql.PostgresProcess;
  * It assumes you have the server jar already installed in your Maven repo
  * and your Maven repository is in the default (linux) location
  * 
+ * This would probably be best moved into its own project dependent on the client and service jars
+ * so that the client and web service are better treated as black boxes.
+ * 
  * @author Caden Howell <cadenh@benetech.org>
  */
 @RunWith(SpringRunner.class)
-//@ActiveProfiles({"integrationtest"})
+@ActiveProfiles({"integrationtest"})
 public class SmokeIT {
 
   boolean environmentReady = true;

@@ -18,7 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
  * @author Caden Howell <cadenh@benetech.org>
  */
 @ContextConfiguration(
-    classes = {MvcConfiguration.class, SecurityConfiguration.class, WebClientConfiguration.class})
+    classes = {MvcConfiguration.class, WebClientConfiguration.class})
 @ActiveProfiles("unittest")
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UnitTestConfig {

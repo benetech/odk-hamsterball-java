@@ -14,7 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @EnableWebSecurity
-@Profile({"default","unittest","integrationtest"})
+@Profile({"default","integrationtest", "unittest"})
 @ComponentScan(basePackages = {"org.benetech"})
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
