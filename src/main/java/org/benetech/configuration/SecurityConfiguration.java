@@ -25,7 +25,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().ignoringAntMatchers("/file/**");
 
-    http.authorizeRequests().antMatchers("/css/**").permitAll() 
+    http.authorizeRequests().antMatchers("/css/**").permitAll().antMatchers("/healthcheck").permitAll() 
         .antMatchers("/images/**").permitAll().antMatchers("/favicon.ico").permitAll().anyRequest()
         .authenticated().and().formLogin().loginPage("/login").failureUrl("/login?error")
         .permitAll().and().logout().permitAll();
