@@ -1,0 +1,41 @@
+<script>
+	$('#deleteRowModal')
+			.on(
+					'show.bs.modal',
+					function(event) {
+						var button = $(event.relatedTarget)
+						var rowETag = button.data('rowetag')
+
+						$('#deleteRowDescription').empty();
+						$('#deleteRowDescription').append(
+								"<table id='confirmDeleteTable'></table>");
+						$('#confirmDeleteTable')
+								.append(
+										"<thead><tr id='confirmDeleteHeader'><th>Row eTag</th><th>Create User</th><th>Savepoint Timestamp</th></tr></thead>")
+						$('#confirmDeleteTable')
+								.append(
+										"<tbody><tr id='confirmDeleteBody'></tr></tbody>")
+						$('#confirmDeleteBody').append(
+								"<td>" + rowETag + "</td>")
+						$('#confirmDeleteBody').append(
+								"<td>"
+										+ $(
+												"#createUser-"
+														+ rowETag.substring(5))
+												.text() + "</td>")
+						$('#confirmDeleteBody').append(
+								"<td>"
+										+ $(
+												"#savepointTimestamp-"
+														+ rowETag.substring(5))
+												.text() + "</td>")
+
+						var modal = $(this)
+						modal.find('input#deleteRowETag').val(rowETag)
+					})
+
+	$('#deleteButton').on('click', function(event) {
+		var button = $(event.target); // The clicked button
+		$('#deleteRowForm').submit()
+	});
+</script>

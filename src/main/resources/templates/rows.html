@@ -35,11 +35,11 @@
 						th:replace="rows/column_heading::colhead ('savepointTimestamp','Savepoint Timestamp', ${sortColumn}, ${ascending})"></th>
 					<th
 						th:replace="rows/column_heading::colhead ('savepointCreator','Savepoint	Creator', ${sortColumn}, ${ascending})"></th>
-
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tfoot>
-				<tr>
+				<tr id="tableHeadingRow">
 
 					<th
 						th:replace="rows/column_heading::colhead ('rowETag','Row eTag', ${sortColumn}, ${ascending})"></th>
@@ -63,27 +63,39 @@
 						th:replace="rows/column_heading::colhead ('savepointTimestamp','Savepoint Timestamp', ${sortColumn}, ${ascending})"></th>
 					<th
 						th:replace="rows/column_heading::colhead ('savepointCreator','Savepoint	Creator', ${sortColumn}, ${ascending})"></th>
-
+					<th>Actions</th>
 				</tr>
 			</tfoot>
-			<tbody th:each="row: ${rowResourceList.rows}">
-				<tr>
-					<td th:text="${row.rowETag}"></td>
-					<td th:text="${row.createUser}"></td>
+			<tbody >
+				<tr th:each="row: ${rowResourceList.rows}" th:id="'tableRow-' + ${#strings.substring(row.rowETag,5)}">
+					<td th:text="${row.rowETag}" ></td>
+					<td th:text="${row.createUser}" th:id="'createUser-' + ${#strings.substring(row.rowETag,5)}"></td>
 					<td th:text="${row.lastUpdateUser}"></td>
 					<th:block th:each="col: ${row.values}">
 						<td th:text="${col.value}"></td>
 					</th:block>
 					<td th:text="${row.locale}"></td>
 					<td th:text="${row.savepointType}"></td>
-					<td th:text="${row.savepointTimestamp}"></td>
+					<td th:text="${row.savepointTimestamp}" th:id="'savepointTimestamp-' + ${#strings.substring(row.rowETag,5)}"></td>
 					<td th:text="${row.savepointCreator}"></td>
+					<td><button type="button" class="btn btn-default"
+							data-toggle="modal" data-target="#editRowModal"
+							th:attr="data-action='edit',data-rowetag=${row.rowETag},data-createuser=${row.createUser},data-lastupdateuser=${row.lastUpdateUser},data-locale=${row.locale}">Edit</button>
+						<button type="button" class="btn btn-danger" data-toggle="modal"
+							data-target="#deleteRowModal"
+							th:attr="data-rowetag=${row.rowETag}">Delete</button></td>
 				</tr>
 			</tbody>
 		</table>
 		<div
 			th:if="${rowResourceList.rows == null or #lists.isEmpty(rowResourceList.rows)}">
 			There are no files.</div>
+
+		<th:block th:include="rows/delete_row_modal"></th:block>
+	</th:block>
+
+	<th:block layout:fragment="odk_tables_bodyend">
+		<th:block th:include="rows/delete_row_script"></th:block>
 	</th:block>
 </body>
 </html>

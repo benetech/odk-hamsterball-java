@@ -19,9 +19,12 @@ import org.opendatakit.aggregate.odktables.rest.entity.TableResource;
 import org.opendatakit.api.forms.entity.FormUploadResult;
 import org.opendatakit.api.offices.entity.RegionalOffice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +44,7 @@ public class TablesController {
 
     OdkClient odkClient = odkClientFactory.getOdkClient();
     OdkTablesFileManifest manifest = odkClient.getTableManifest(tableId);
+    
     model.addAttribute("manifest", manifest);
     model.addAttribute("tableId", tableId);
     return "manifest";
@@ -87,6 +91,22 @@ public class TablesController {
     model.addAttribute("ascending", ascending);
     model.addAttribute("sortColumn", sortColumn);
 
+    return "rows";
+  }
+  
+
+  
+  @PostMapping("/table/rows/{tableId}/delete")
+  public String deleteRow(@ModelAttribute("office") RegionalOffice office, Model model) {
+    OdkClient odkClient = odkClientFactory.getOdkClient();
+//    logger.debug("Updating office " + office.getOfficeId());
+//
+//    HttpStatus status = odkClient.deleteOffice(office.getOfficeId());
+//    logger.debug("Result HTTP status: " + status.name());
+//
+//    model.addAttribute("msg",
+//        "Office " + office.getName() + " (" + office.getOfficeId() + ") has been deleted.");
+//    model.addAttribute("css", "info");
     return "rows";
   }
 
