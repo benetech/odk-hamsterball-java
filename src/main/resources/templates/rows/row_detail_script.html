@@ -1,0 +1,176 @@
+<script>
+	$('#rowDetailModal').on('show.bs.modal', function(event) {
+		$('#changePasswordSubForm').remove();
+		var button = $(event.relatedTarget)
+		clearAddEditErrors();
+		resetAddEditModalButtons();
+		var fullName = button.data('fullname') // Extract info from data-* attributes
+		var username = button.data('username')
+		var officeId = button.data('officeid')
+		var roles = button.data('roles')
+		var action = button.data('action')
+
+		if (roles == null) {
+			roles = '';
+		}
+
+		setAddOrEdit(username, action)
+
+		var modal = $(this)
+		modal.find('input#fullName').val(fullName)
+		modal.find('select#officeId').val(officeId)
+
+		$("input[name='roles']").each(function() {
+			if (roles.includes($(this).val())) {
+				$(this).prop('checked', true);
+			} else {
+				$(this).prop('checked', false);
+			}
+		});
+
+		// anonymous can't edit username or full name
+		if (username == 'anonymous') {
+			modal.find('input#fullName').prop('disabled', true);
+			modal.find('input#username').prop('disabled', true);
+		} else {
+			modal.find('input#fullName').prop('disabled', false);
+			modal.find('input#username').prop('disabled', false);
+		}
+
+	})
+
+	function setAddOrEdit(username, action) {
+		$("#usernameFormGroup").empty();
+		$("#addUserChangePasswordSubForm").empty();
+
+		if (action == 'add') {
+			$("#usernameFormGroup")
+					.append(
+							'<label id="usernameLabel" class="control-label" for="officeId">Username: </label>');
+			$("#usernameLabel").append(
+					' <span id="username-error" class="text-danger"></span>');
+			$("#usernameFormGroup")
+					.append(
+							'<input type="text" name="username" id="username" class="form-control"></input>');
+
+			// Insert shared password fields
+			var passwordSubForm = getChangePasswordSubform();
+			$("#addUserChangePasswordSubFormTarget").append(passwordSubForm);
+			$("#addEditButton").data("action", "add");
+		} else {
+			$("#usernameFormGroup")
+					.append(
+							'<span id="usernameLabel" class="label-look-span">Username: </span>');
+			$("#usernameFormGroup").append(' ' + username);
+			$("#usernameFormGroup")
+					.append(
+							'<input type="hidden" name="username" id="username" ></input>');
+			$("#addEditButton").data("action", "edit");
+
+		}
+		$('input#username').val(username)
+
+	}
+
+	function clearAddEditErrors() {
+		$("#rowDetailResult").remove();
+		$("#username-error").text('');
+		$("#fullname-error").text('');
+		$("#roles-error").text('');
+		$("#office-error").text('');
+		$("#password1-error").text('');
+		$("#password2-error").text('');
+		
+	}
+
+	// Change cancel button to close, make close button reload page and reread web service
+	function dirtyAddEditModalButtons() {
+		$("#rowDetailCloseCancelButton").text("Close");
+		$("#rowDetailCloseCancelButton").removeClass("data-dismiss");
+		$("#rowDetailCloseCancelButton").removeClass("btn-secondary");
+		$("#rowDetailCloseCancelButton").addClass("btn-primary");
+		$("#rowDetailCloseCancelButton").on('click', function(event) {
+			// "replace" does not add history item, if we want one for some reason, use "href"
+			window.location.replace("/admin/users");
+		})
+		$("#addEditButton").addClass("btn-secondary");
+		$("#addEditButton").removeClass("btn-primary");
+	}
+
+	// Reset cancel button, detach events
+	function resetAddEditModalButtons() {
+		$("#rowDetailCloseCancelButton").text("Cancel");
+		$("#rowDetailCloseCancelButton").addClass("data-dismiss");
+		$("#rowDetailCloseCancelButton").addClass("btn-secondary");
+		$("#rowDetailCloseCancelButton").removeClass("btn-primary");
+		$("#rowDetailCloseCancelButton").prop('onclick', null).off('click');
+		$("#addEditButton").removeClass("btn-secondary");
+		$("#addEditButton").addClass("btn-primary");
+	}
+
+	$('#addEditButton')
+			.on(
+					'click',
+					function(event) {
+						var button = $(event.target); // The clicked button
+						var action = button.data('action')
+
+						clearAddEditErrors();
+						$
+								.ajax({
+									type : 'POST',
+									url : '/admin/users/' + action,
+									data : $('#rowDetailForm').serialize(),
+									success : function(result) {
+										$("#rowDetailModal .modal-body")
+												.prepend(
+														'<div id="rowDetailResult" class="alert alert-success alert-dismissible" role="alert"/>');
+										$("#rowDetailResult")
+												.append(
+														'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
+										$("#rowDetailResult").append(
+												'<strong>'
+														+ result.summaryMessage
+														+ '</strong>');
+										// Once the username is set, don't allow updates
+										var form = $('#rowDetailForm');
+										setAddOrEdit(form
+												.find('input#username').val(),
+												'edit');
+										dirtyAddEditModalButtons();
+									},
+									error : function(result) {
+										$("#rowDetailModal .modal-body")
+												.prepend(
+														'<div id="rowDetailResult" class="alert alert-danger alert-dismissible" role="alert"/>');
+										$("#rowDetailResult")
+												.append(
+														'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
+										$("#rowDetailResult")
+												.append(
+														'<strong>'
+																+ result.responseJSON.summaryMessage
+																+ '</strong>');
+										$("#username-error")
+												.text(
+														result.responseJSON.errors.username);
+										$("#fullname-error")
+												.text(
+														result.responseJSON.errors.fullName);
+										$("#roles-error")
+												.text(
+														result.responseJSON.errors.roles);
+										$("#office-error")
+												.text(
+														result.responseJSON.errors.officeId);
+										$("#password1-error")
+										.text(
+												result.responseJSON.errors.password1);
+										$("#password2-error")
+										.text(
+												result.responseJSON.errors.password2);
+									},
+									dataType : "json"
+								});
+					});
+</script>

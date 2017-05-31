@@ -12,7 +12,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<form th:action="@{|/table/rows/${tableId}/delete|}" method="post"
+				<form th:action="@{|/tables/${tableId}/rows/delete|}" method="post"
 					id="deleteRowForm">
 					<input type="hidden" name="rowId" id="deleteRowId"></input> <input
 						type="hidden" name="columnName" th:value="${columnName}"></input>

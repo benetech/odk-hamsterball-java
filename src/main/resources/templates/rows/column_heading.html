@@ -1,9 +1,9 @@
 <th th:fragment="colhead (columnName,displayName,sortColumn,ascending)">
 	<a th:if="${columnName!=sortColumn}"
-	th:href="@{|/tables/rows/${tableId}?sortColumn=${columnName}&ascending=true|}"
+	th:href="@{|/tables/${tableId}/rows?sortColumn=${columnName}&ascending=true|}"
 	th:text=${displayName}></a> 
 	<a th:if="${columnName==sortColumn}"
-	th:href="@{|/tables/rows/${tableId}?sortColumn=${columnName}&ascending=${!ascending}|}"
+	th:href="@{|/tables/${tableId}/rows?sortColumn=${columnName}&ascending=${!ascending}|}"
 	th:text=${displayName}
 	th:classappend="${columnName==sortColumn && ascending} ? sortColumnAscending"
 	th:class="${columnName==sortColumn && !ascending} ? sortColumnDescending"></a>

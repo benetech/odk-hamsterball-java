@@ -81,8 +81,8 @@
 					<td th:text="${row.savepointTimestamp}" th:id="'savepointTimestamp-' + ${#strings.substring(row.rowETag,5)}"></td>
 					<td th:text="${row.savepointCreator}"></td>
 					<td><button type="button" class="btn btn-default"
-							data-toggle="modal" data-target="#editRowModal"
-							th:attr="data-action='edit',data-rowetag=${row.rowETag},data-createuser=${row.createUser},data-lastupdateuser=${row.lastUpdateUser},data-locale=${row.locale}">Edit</button>
+							data-toggle="modal" data-target="#rowDetailModal"
+							th:attr="data-rowid=${row.rowId},data-rowetag=${row.rowETag}">View Details</button>
 						<button type="button" class="btn btn-danger" data-toggle="modal"
 							data-target="#deleteRowModal"
 							th:attr="data-rowid=${row.rowId},data-rowetag=${row.rowETag}">Delete</button></td>

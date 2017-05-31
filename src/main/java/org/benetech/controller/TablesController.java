@@ -73,7 +73,7 @@ public class TablesController {
     return "export";
   }
 
-  @RequestMapping("/tables/rows/{tableId}")
+  @RequestMapping("/tables/{tableId}/rows")
   public String rows(@PathVariable("tableId") String tableId,
       @RequestParam(name = "sortColumn", defaultValue = "_savepoint_timestamp",
           required = false) String sortColumn,
@@ -88,7 +88,7 @@ public class TablesController {
 
 
 
-  @PostMapping("/table/rows/{tableId}/delete")
+  @PostMapping("/table/{tableId}/rows/delete")
   public String deleteRow(@PathVariable("tableId") String tableId,
       @RequestParam(name = "rowId") String rowId,
       @RequestParam(name = "sortColumn", defaultValue = "_savepoint_timestamp",
