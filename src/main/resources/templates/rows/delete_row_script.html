@@ -4,6 +4,7 @@
 					'show.bs.modal',
 					function(event) {
 						var button = $(event.relatedTarget)
+						var rowId = button.data('rowid')
 						var rowETag = button.data('rowetag')
 
 						$('#deleteRowDescription').empty();
@@ -31,7 +32,7 @@
 												.text() + "</td>")
 
 						var modal = $(this)
-						modal.find('input#deleteRowETag').val(rowETag)
+						modal.find('input#deleteRowId').val(rowId)
 					})
 
 	$('#deleteButton').on('click', function(event) {

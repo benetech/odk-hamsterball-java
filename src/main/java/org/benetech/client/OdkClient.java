@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.benetech.constants.GeneralConsts;
 import org.benetech.model.form.UserEntityForm;
 import org.opendatakit.aggregate.odktables.rest.entity.OdkTablesFileManifest;
+import org.opendatakit.aggregate.odktables.rest.entity.RowResource;
 import org.opendatakit.aggregate.odktables.rest.entity.RowResourceList;
 import org.opendatakit.aggregate.odktables.rest.entity.TableResource;
 import org.opendatakit.aggregate.odktables.rest.entity.TableResourceList;
@@ -58,6 +59,8 @@ public class OdkClient {
       "/odktables/{appId}/manifest/{odkClientVersion}/{tableId}";
   public static String TABLE_ROWS_ENDPOINT =
       "/odktables/{appId}/tables/{tableId}/ref/{schemaETag}/rows";
+  public static String TABLE_SINGLE_ROW_ENDPOINT =
+      "/odktables/{appId}/tables/{tableId}/ref/{schemaETag}/rows/{rowId}";
   public static String TABLE_ATTACHMENT_MANIFEST_ENDPOINT =
       "/odktables/{appId}/tables/{tableId}/ref/{schemaETag}/attachments/manifest";
 
@@ -256,11 +259,39 @@ public class OdkClient {
         .replace("{tableId}", tableId).replace("{schemaETag}", schemaETag));
     getRowListUrl.append("?sortColumn=" + sortColumn);
     getRowListUrl.append("&ascending=" + ascending);
+   
 
     logger.debug("Calling " + getRowListUrl);
     ResponseEntity<RowResourceList> getResponse = restTemplate.exchange(getRowListUrl.toString(),
         HttpMethod.GET, null, new ParameterizedTypeReference<RowResourceList>() {});
     RowResourceList tableResource = getResponse.getBody();
+    return tableResource;
+
+  }
+  
+  public RowResourceList putRowResourceList(String tableId, String schemaETag, RowResourceList putList) {
+
+    StringBuilder getRowListUrl = new StringBuilder(getUrl(TABLE_ROWS_ENDPOINT)
+        .replace("{tableId}", tableId).replace("{schemaETag}", schemaETag));
+
+
+    logger.debug("Calling " + getRowListUrl);
+    ResponseEntity<RowResourceList> getResponse = restTemplate.exchange(getRowListUrl.toString(),
+        HttpMethod.PUT, null, new ParameterizedTypeReference<RowResourceList>() {});
+    RowResourceList tableResource = getResponse.getBody();
+    return tableResource;
+
+  }
+  
+  public RowResource getSingleRow(String tableId, String schemaETag, String rowId) {
+
+    StringBuilder getSingleRowUrl = new StringBuilder(getUrl(TABLE_SINGLE_ROW_ENDPOINT)
+        .replace("{tableId}", tableId).replace("{schemaETag}", schemaETag).replace("{rowId}", rowId));
+
+    logger.info("Calling " + getSingleRowUrl);
+    ResponseEntity<RowResource> getResponse = restTemplate.exchange(getSingleRowUrl.toString(),
+        HttpMethod.GET, null, new ParameterizedTypeReference<RowResource>() {});
+    RowResource tableResource = getResponse.getBody();
     return tableResource;
 
   }

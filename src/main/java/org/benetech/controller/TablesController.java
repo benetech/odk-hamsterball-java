@@ -14,6 +14,7 @@ import org.benetech.client.OdkClientFactory;
 import org.benetech.model.display.OdkTablesFileManifestEntryDisplay;
 import org.opendatakit.aggregate.odktables.rest.entity.OdkTablesFileManifest;
 import org.opendatakit.aggregate.odktables.rest.entity.OdkTablesFileManifestEntry;
+import org.opendatakit.aggregate.odktables.rest.entity.RowResource;
 import org.opendatakit.aggregate.odktables.rest.entity.RowResourceList;
 import org.opendatakit.aggregate.odktables.rest.entity.TableResource;
 import org.opendatakit.api.forms.entity.FormUploadResult;
@@ -44,7 +45,7 @@ public class TablesController {
 
     OdkClient odkClient = odkClientFactory.getOdkClient();
     OdkTablesFileManifest manifest = odkClient.getTableManifest(tableId);
-    
+
     model.addAttribute("manifest", manifest);
     model.addAttribute("tableId", tableId);
     return "manifest";
@@ -82,6 +83,39 @@ public class TablesController {
       Model model) {
 
     OdkClient odkClient = odkClientFactory.getOdkClient();
+
+    populateDefaultModel(tableId, sortColumn, ascending, model);
+    return "rows";
+  }
+
+
+
+  @PostMapping("/table/rows/{tableId}/delete")
+  public String deleteRow(@PathVariable("tableId") String tableId,
+      @RequestParam(name = "rowId") String rowId,
+      @RequestParam(name = "sortColumn", defaultValue = "savepointTimestamp",
+          required = false) String sortColumn,
+      @RequestParam(name = "ascending", defaultValue = "false", required = false) boolean ascending,
+      Model model) {
+    OdkClient odkClient = odkClientFactory.getOdkClient();
+    TableResource tableResource = odkClient.getTableResource(tableId);
+    RowResource rowResource = odkClient.getSingleRow(tableId, tableResource.getSchemaETag(), rowId);
+    rowResource.setDeleted(true);
+    RowResourceList putList = new RowResourceList();
+    putList.getRows().add(rowResource);
+    odkClient.putRowResourceList(tableId, tableResource.getSchemaETag(), putList);
+
+    populateDefaultModel(tableId, sortColumn, ascending, model);
+    model.addAttribute("msg",
+        "Row " + rowResource.getRowETag() + " has been deleted.");
+    model.addAttribute("css", "info");
+    return "rows";
+  }
+
+  private void populateDefaultModel(String tableId, String sortColumn, boolean ascending,
+      Model model) {
+    OdkClient odkClient = odkClientFactory.getOdkClient();
+
     TableResource tableResource = odkClient.getTableResource(tableId);
     RowResourceList rowResourceList =
         odkClient.getRowResourceList(tableId, tableResource.getSchemaETag(), sortColumn, ascending);
@@ -90,29 +124,10 @@ public class TablesController {
     model.addAttribute("tableId", tableId);
     model.addAttribute("ascending", ascending);
     model.addAttribute("sortColumn", sortColumn);
-
-    return "rows";
-  }
-  
-
-  
-  @PostMapping("/table/rows/{tableId}/delete")
-  public String deleteRow(@ModelAttribute("office") RegionalOffice office, Model model) {
-    OdkClient odkClient = odkClientFactory.getOdkClient();
-//    logger.debug("Updating office " + office.getOfficeId());
-//
-//    HttpStatus status = odkClient.deleteOffice(office.getOfficeId());
-//    logger.debug("Result HTTP status: " + status.name());
-//
-//    model.addAttribute("msg",
-//        "Office " + office.getName() + " (" + office.getOfficeId() + ") has been deleted.");
-//    model.addAttribute("css", "info");
-    return "rows";
   }
 
   @GetMapping("/tables/upload")
   public String uploadForm(Model model) {
-
     OdkClient odkClient = odkClientFactory.getOdkClient();
     List<RegionalOffice> offices = odkClient.getOfficeList();
     model.addAttribute("offices", offices);

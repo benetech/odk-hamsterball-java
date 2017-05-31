@@ -8,6 +8,8 @@
 <body>
 
 	<th:block layout:fragment="odktablescontent">
+			<th:block th:include="messaging/dismissable_alert"></th:block>
+	
 		<table class="table"
 			th:if="${rowResourceList.rows != null and not #lists.isEmpty(rowResourceList.rows)}">
 			<thead>
@@ -83,7 +85,7 @@
 							th:attr="data-action='edit',data-rowetag=${row.rowETag},data-createuser=${row.createUser},data-lastupdateuser=${row.lastUpdateUser},data-locale=${row.locale}">Edit</button>
 						<button type="button" class="btn btn-danger" data-toggle="modal"
 							data-target="#deleteRowModal"
-							th:attr="data-rowetag=${row.rowETag}">Delete</button></td>
+							th:attr="data-rowid=${row.rowId},data-rowetag=${row.rowETag}">Delete</button></td>
 				</tr>
 			</tbody>
 		</table>

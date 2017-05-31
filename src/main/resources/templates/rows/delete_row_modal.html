@@ -1,30 +1,31 @@
-		<!-- Delete Row Modal -->
-		<div class="modal fade" id="deleteRowModal" tabindex="-1"
-			role="dialog" aria-labelledby="deleteRowModalLabel"
-			aria-hidden="true">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="deleteRowModalLabel">Delete Row</h5>
-						<button type="button" class="close" data-dismiss="modal"
-							aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<form th:action="@{|/table/rows/${tableId}/delete|}" method="post"
-							id="deleteRowForm">
-							<input type="hidden" name="rowETag" id="deleteRowETag"></input>
-						</form>
-						<p>Really delete this row?</p>
-						<p id="deleteRowDescription"></p>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary"
-							data-dismiss="modal">Cancel</button>
-						<button name="deleteButton" id="deleteButton" type="button"
-							class="btn btn-danger" data-dismiss="modal">Delete Row</button>
-					</div>
-				</div>
+
+<!-- Delete Row Modal -->
+<div class="modal fade" id="deleteRowModal" tabindex="-1" role="dialog"
+	aria-labelledby="deleteRowModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="deleteRowModalLabel">Delete Row</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form th:action="@{|/table/rows/${tableId}/delete|}" method="post"
+					id="deleteRowForm">
+					<input type="hidden" name="rowId" id="deleteRowId"></input> <input
+						type="hidden" name="columnName" th:value="${columnName}"></input>
+					<input type="hidden" name="ascending" th:value="${ascending}"></input>
+				</form>
+				<p>Really delete this row?</p>
+				<p id="deleteRowDescription"></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				<button name="deleteButton" id="deleteButton" type="button"
+					class="btn btn-danger" data-dismiss="modal">Delete Row</button>
 			</div>
 		</div>
+	</div>
+</div>
