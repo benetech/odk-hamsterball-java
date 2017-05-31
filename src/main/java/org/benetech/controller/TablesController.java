@@ -4,28 +4,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.benetech.client.OdkClient;
 import org.benetech.client.OdkClientFactory;
 import org.benetech.model.display.OdkTablesFileManifestEntryDisplay;
+import org.benetech.util.RowUtils;
 import org.opendatakit.aggregate.odktables.rest.entity.OdkTablesFileManifest;
 import org.opendatakit.aggregate.odktables.rest.entity.OdkTablesFileManifestEntry;
+import org.opendatakit.aggregate.odktables.rest.entity.Row;
+import org.opendatakit.aggregate.odktables.rest.entity.RowList;
+import org.opendatakit.aggregate.odktables.rest.entity.RowOutcomeList;
 import org.opendatakit.aggregate.odktables.rest.entity.RowResource;
 import org.opendatakit.aggregate.odktables.rest.entity.RowResourceList;
 import org.opendatakit.aggregate.odktables.rest.entity.TableResource;
 import org.opendatakit.api.forms.entity.FormUploadResult;
 import org.opendatakit.api.offices.entity.RegionalOffice;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,7 +75,7 @@ public class TablesController {
 
   @RequestMapping("/tables/rows/{tableId}")
   public String rows(@PathVariable("tableId") String tableId,
-      @RequestParam(name = "sortColumn", defaultValue = "savepointTimestamp",
+      @RequestParam(name = "sortColumn", defaultValue = "_savepoint_timestamp",
           required = false) String sortColumn,
       @RequestParam(name = "ascending", defaultValue = "false", required = false) boolean ascending,
       Model model) {
@@ -93,17 +91,19 @@ public class TablesController {
   @PostMapping("/table/rows/{tableId}/delete")
   public String deleteRow(@PathVariable("tableId") String tableId,
       @RequestParam(name = "rowId") String rowId,
-      @RequestParam(name = "sortColumn", defaultValue = "savepointTimestamp",
+      @RequestParam(name = "sortColumn", defaultValue = "_savepoint_timestamp",
           required = false) String sortColumn,
       @RequestParam(name = "ascending", defaultValue = "false", required = false) boolean ascending,
       Model model) {
     OdkClient odkClient = odkClientFactory.getOdkClient();
     TableResource tableResource = odkClient.getTableResource(tableId);
     RowResource rowResource = odkClient.getSingleRow(tableId, tableResource.getSchemaETag(), rowId);
-    rowResource.setDeleted(true);
-    RowResourceList putList = new RowResourceList();
-    putList.getRows().add(rowResource);
-    odkClient.putRowResourceList(tableId, tableResource.getSchemaETag(), putList);
+    RowList putList = new RowList();
+    Row row =  RowUtils.resourceToRow(rowResource);
+    row.setDeleted(true);
+    putList.getRows().add(row);
+    putList.setDataETag(tableResource.getDataETag());
+    RowOutcomeList rowOutcomeList= odkClient.putRowList(tableId, tableResource.getSchemaETag(), putList);
 
     populateDefaultModel(tableId, sortColumn, ascending, model);
     model.addAttribute("msg",

@@ -12,6 +12,8 @@ import org.apache.commons.logging.LogFactory;
 import org.benetech.constants.GeneralConsts;
 import org.benetech.model.form.UserEntityForm;
 import org.opendatakit.aggregate.odktables.rest.entity.OdkTablesFileManifest;
+import org.opendatakit.aggregate.odktables.rest.entity.RowList;
+import org.opendatakit.aggregate.odktables.rest.entity.RowOutcomeList;
 import org.opendatakit.aggregate.odktables.rest.entity.RowResource;
 import org.opendatakit.aggregate.odktables.rest.entity.RowResourceList;
 import org.opendatakit.aggregate.odktables.rest.entity.TableResource;
@@ -21,7 +23,6 @@ import org.opendatakit.api.offices.entity.RegionalOffice;
 import org.opendatakit.api.users.entity.RoleDescription;
 import org.opendatakit.api.users.entity.UserEntity;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -269,18 +270,18 @@ public class OdkClient {
 
   }
   
-  public RowResourceList putRowResourceList(String tableId, String schemaETag, RowResourceList putList) {
+  public RowOutcomeList putRowList(String tableId, String schemaETag, RowList rowList) {
 
     StringBuilder getRowListUrl = new StringBuilder(getUrl(TABLE_ROWS_ENDPOINT)
         .replace("{tableId}", tableId).replace("{schemaETag}", schemaETag));
 
-
     logger.debug("Calling " + getRowListUrl);
-    ResponseEntity<RowResourceList> getResponse = restTemplate.exchange(getRowListUrl.toString(),
-        HttpMethod.PUT, null, new ParameterizedTypeReference<RowResourceList>() {});
-    RowResourceList tableResource = getResponse.getBody();
-    return tableResource;
 
+    HttpEntity<RowList> putRowListEntity = new HttpEntity<>(rowList);
+    ResponseEntity<RowOutcomeList> postResponse =
+        restTemplate.exchange(getRowListUrl.toString(), HttpMethod.PUT, putRowListEntity, RowOutcomeList.class);
+   
+    return postResponse.getBody();
   }
   
   public RowResource getSingleRow(String tableId, String schemaETag, String rowId) {
