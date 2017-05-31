@@ -11,8 +11,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.benetech.client.OdkClient;
 import org.benetech.constants.GeneralConsts;
+import org.benetech.controller.ajax.HealthCheckControllerAjax;
 import org.benetech.security.client.digest.DigestRestTemplateFactory;
 import org.benetech.util.OdkClientUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,7 @@ import org.springframework.web.client.RestTemplate;
 
 public class WebServiceDelegatingAuthenticationProvider implements AuthenticationProvider {
 
+  private static Log logger = LogFactory.getLog(WebServiceDelegatingAuthenticationProvider.class);
 
   Properties webServicesProperties;
 
@@ -64,9 +68,13 @@ public class WebServiceDelegatingAuthenticationProvider implements Authenticatio
     String getRolesGrantedUrl = odkUrl.toExternalForm() + OdkClient.ROLES_GRANTED_ENDPOINT;
     ResponseEntity<List<String>> getResponse = null;
     try {
+      logger.info("Logging in with " + getRolesGrantedUrl);
+
       getResponse = restTemplate.exchange(getRolesGrantedUrl, HttpMethod.GET, null,
           new ParameterizedTypeReference<List<String>>() {});
     } catch (HttpClientErrorException e) {
+      logger.info("Received an exception when getting granted roles", e);
+
       if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
         throw new BadCredentialsException("Unable to log in to remote web service.");
       }
@@ -84,6 +92,8 @@ public class WebServiceDelegatingAuthenticationProvider implements Authenticatio
       token.setDetails(userDetails);
       return token;
     } else {
+      logger.info("Received a non-200 error code when getting granted roles: " + getResponse.getStatusCodeValue());
+
       // Add more error cases here, or research how it is handled by default.
       // "Bad Credentials" is only one potential cause.
       throw new BadCredentialsException("Unable to log in to remote web service.");
