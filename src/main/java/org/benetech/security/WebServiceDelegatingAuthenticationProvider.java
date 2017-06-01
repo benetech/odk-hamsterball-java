@@ -74,6 +74,9 @@ public class WebServiceDelegatingAuthenticationProvider implements Authenticatio
           new ParameterizedTypeReference<List<String>>() {});
     } catch (HttpClientErrorException e) {
       logger.info("Received an exception when getting granted roles", e);
+      logger.info("Received " + getResponse.getStatusCodeValue());
+      logger.info("Received " + getResponse.getBody());
+
 
       if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
         throw new BadCredentialsException("Unable to log in to remote web service.");
@@ -93,7 +96,6 @@ public class WebServiceDelegatingAuthenticationProvider implements Authenticatio
       return token;
     } else {
       logger.info("Received a non-200 error code when getting granted roles: " + getResponse.getStatusCodeValue());
-
       // Add more error cases here, or research how it is handled by default.
       // "Bad Credentials" is only one potential cause.
       throw new BadCredentialsException("Unable to log in to remote web service.");
