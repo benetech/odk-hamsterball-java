@@ -35,6 +35,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class OdkClient {
 
   private static Log logger = LogFactory.getLog(OdkClient.class);
@@ -239,6 +241,14 @@ public class OdkClient {
 
     return manifest;
 
+  }
+  
+  public String getFormDefinition(String url) {
+    ResponseEntity<String> getResponse = restTemplate.exchange(url,
+        HttpMethod.GET, null, String.class);
+    String response = getResponse.getBody();
+logger.info(response);
+    return response;
   }
 
   public TableResource getTableResource(String tableId) {

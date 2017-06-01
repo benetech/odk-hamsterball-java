@@ -8,8 +8,8 @@
 <body>
 
 	<th:block layout:fragment="odktablescontent">
-			<th:block th:include="messaging/dismissable_alert"></th:block>
-	
+		<th:block th:include="messaging/dismissable_alert"></th:block>
+
 		<table class="table"
 			th:if="${rowResourceList.rows != null and not #lists.isEmpty(rowResourceList.rows)}">
 			<thead>
@@ -68,21 +68,25 @@
 					<th>Actions</th>
 				</tr>
 			</tfoot>
-			<tbody >
-				<tr th:each="row: ${rowResourceList.rows}" th:id="'tableRow-' + ${#strings.substring(row.rowETag,5)}">
-					<td th:text="${row.rowETag}" ></td>
-					<td th:text="${row.createUser}" th:id="'createUser-' + ${#strings.substring(row.rowETag,5)}"></td>
+			<tbody>
+				<tr th:each="row: ${rowResourceList.rows}"
+					th:id="'tableRow-' + ${#strings.substring(row.rowETag,5)}">
+					<td th:text="${row.rowETag}"></td>
+					<td th:text="${row.createUser}"
+						th:id="'createUser-' + ${#strings.substring(row.rowETag,5)}"></td>
 					<td th:text="${row.lastUpdateUser}"></td>
 					<th:block th:each="col: ${row.values}">
 						<td th:text="${col.value}"></td>
 					</th:block>
 					<td th:text="${row.locale}"></td>
 					<td th:text="${row.savepointType}"></td>
-					<td th:text="${row.savepointTimestamp}" th:id="'savepointTimestamp-' + ${#strings.substring(row.rowETag,5)}"></td>
+					<td th:text="${row.savepointTimestamp}"
+						th:id="'savepointTimestamp-' + ${#strings.substring(row.rowETag,5)}"></td>
 					<td th:text="${row.savepointCreator}"></td>
 					<td><button type="button" class="btn btn-default"
 							data-toggle="modal" data-target="#rowDetailModal"
-							th:attr="data-rowid=${row.rowId},data-rowetag=${row.rowETag}">View Details</button>
+							th:attr="data-rowid=${row.rowId},data-rowetag=${row.rowETag}">View
+							Details</button>
 						<button type="button" class="btn btn-danger" data-toggle="modal"
 							data-target="#deleteRowModal"
 							th:attr="data-rowid=${row.rowId},data-rowetag=${row.rowETag}">Delete</button></td>
@@ -94,10 +98,14 @@
 			There are no files.</div>
 
 		<th:block th:include="rows/delete_row_modal"></th:block>
+		<th:block th:include="rows/row_detail_modal"></th:block>
+
 	</th:block>
 
 	<th:block layout:fragment="odk_tables_bodyend">
 		<th:block th:include="rows/delete_row_script"></th:block>
+		<th:block th:include="rows/row_detail_script"></th:block>
+
 	</th:block>
 </body>
 </html>

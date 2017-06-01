@@ -1,42 +1,54 @@
 <script>
 	$('#rowDetailModal').on('show.bs.modal', function(event) {
-		$('#changePasswordSubForm').remove();
 		var button = $(event.relatedTarget)
-		clearAddEditErrors();
-		resetAddEditModalButtons();
-		var fullName = button.data('fullname') // Extract info from data-* attributes
-		var username = button.data('username')
-		var officeId = button.data('officeid')
-		var roles = button.data('roles')
-		var action = button.data('action')
+		var rowId = button.data('rowid')
+		var rowETag = button.data('rowetag')
+		/*<![CDATA[*/
+    	var tableId = "[[${tableId}]]";
+		/*]]>*/
 
-		if (roles == null) {
-			roles = '';
-		}
 
-		setAddOrEdit(username, action)
 
-		var modal = $(this)
-		modal.find('input#fullName').val(fullName)
-		modal.find('select#officeId').val(officeId)
 
-		$("input[name='roles']").each(function() {
-			if (roles.includes($(this).val())) {
-				$(this).prop('checked', true);
-			} else {
-				$(this).prop('checked', false);
-			}
+		$
+		.ajax({
+			type : 'GET',
+			url : '/tables/' + tableId + '/rows/' + rowId,
+			//data : $('#rowDetailForm').serialize(),
+			success : function(result) {
+				$("#rowDetailModal .modal-body")
+						.prepend(
+								'<div id="rowDetailResult" class="alert alert-success alert-dismissible" role="alert"/>');
+				$("#rowDetailResult")
+						.append(
+								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
+				$("#rowDetailResult").append(
+						'<strong>'
+								+ result.summaryMessage
+								+ '</strong>');
+				// Once the username is set, don't allow updates
+				var form = $('#rowDetailForm');
+				setAddOrEdit(form
+						.find('input#username').val(),
+						'edit');
+				dirtyAddEditModalButtons();
+			},
+			error : function(result) {
+				$("#rowDetailModal .modal-body")
+						.prepend(
+								'<div id="rowDetailResult" class="alert alert-danger alert-dismissible" role="alert"/>');
+				$("#rowDetailResult")
+						.append(
+								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
+				$("#rowDetailResult")
+						.append(
+								'<strong>'
+										+ result.responseJSON.summaryMessage
+										+ '</strong>');
+
+			},
+			dataType : "json"
 		});
-
-		// anonymous can't edit username or full name
-		if (username == 'anonymous') {
-			modal.find('input#fullName').prop('disabled', true);
-			modal.find('input#username').prop('disabled', true);
-		} else {
-			modal.find('input#fullName').prop('disabled', false);
-			modal.find('input#username').prop('disabled', false);
-		}
-
 	})
 
 	function setAddOrEdit(username, action) {
