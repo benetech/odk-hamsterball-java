@@ -1,7 +1,5 @@
 package org.benetech.controller;
 
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +30,6 @@ public class WhoAmIController {
   @RequestMapping("/whoami")
   public String whoami(Model model, Authentication authentication, HttpSession session) {
 
-    List<String>attrNames = Collections.list(session.getAttributeNames());
-    for (String attrName: attrNames) {
-      logger.info(attrName + ": " + session.getAttribute(attrName));
-    }
     model.addAttribute("username", authentication.getName());
     model.addAttribute("roles", authentication.getAuthorities());
     OdkClient odkClient = odkClientFactory.getOdkClient();

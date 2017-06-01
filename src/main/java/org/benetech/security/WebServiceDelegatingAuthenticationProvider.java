@@ -73,7 +73,7 @@ public class WebServiceDelegatingAuthenticationProvider implements Authenticatio
       getResponse = restTemplate.exchange(getRolesGrantedUrl, HttpMethod.GET, null,
           new ParameterizedTypeReference<List<String>>() {});
     } catch (HttpClientErrorException e) {
-      logger.info("Received an exception when getting granted roles", e);
+      logger.info("Received an exception when getting granted roles");
       logger.info("Received " + e.getRawStatusCode());
       logger.info("Received " + e.getResponseBodyAsString());
 
