@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>com.github.benetech</groupId>
 			<artifactId>odk-hamster-digest-auth-client</artifactId>
-			<version>1.0.1-RELEASE</version>
+			<version>master-SNAPSHOT</version>
 		</dependency>
 		<!-- <dependency> -->
 		<!-- <groupId>org.opendatakit</groupId> -->
