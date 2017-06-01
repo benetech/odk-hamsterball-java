@@ -74,8 +74,8 @@ public class WebServiceDelegatingAuthenticationProvider implements Authenticatio
           new ParameterizedTypeReference<List<String>>() {});
     } catch (HttpClientErrorException e) {
       logger.info("Received an exception when getting granted roles", e);
-      logger.info("Received " + getResponse.getStatusCodeValue());
-      logger.info("Received " + getResponse.getBody());
+      logger.info("Received " + e.getRawStatusCode());
+      logger.info("Received " + e.getResponseBodyAsString());
 
 
       if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
