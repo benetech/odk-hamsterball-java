@@ -5,6 +5,9 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{odk_tables_layout}">
 <th:block layout:fragment="title" th:text="'Rows for ' + ${tableId}"></th:block>
+<head>
+<link rel="stylesheet" href="/css/modal.css">
+</head>
 <body>
 
 	<th:block layout:fragment="odktablescontent">
@@ -14,7 +17,7 @@
 			th:if="${rowResourceList.rows != null and not #lists.isEmpty(rowResourceList.rows)}">
 			<thead>
 				<tr>
-
+					<th>Actions</th>
 					<th
 						th:replace="rows/column_heading::colhead ('_row_etag','Row eTag', ${sortColumn}, ${ascending})"></th>
 					<th
@@ -37,12 +40,12 @@
 						th:replace="rows/column_heading::colhead ('_savepoint_timestamp','Savepoint Timestamp', ${sortColumn}, ${ascending})"></th>
 					<th
 						th:replace="rows/column_heading::colhead ('_savepoint_creator','Savepoint	Creator', ${sortColumn}, ${ascending})"></th>
-					<th>Actions</th>
+
 				</tr>
 			</thead>
 			<tfoot>
 				<tr id="tableHeadingRow">
-
+					<th>Actions</th>
 					<th
 						th:replace="rows/column_heading::colhead ('_row_etag','Row eTag', ${sortColumn}, ${ascending})"></th>
 					<th
@@ -65,12 +68,19 @@
 						th:replace="rows/column_heading::colhead ('_savepoint_timestamp','Savepoint Timestamp', ${sortColumn}, ${ascending})"></th>
 					<th
 						th:replace="rows/column_heading::colhead ('_savepoint_creator','Savepoint	Creator', ${sortColumn}, ${ascending})"></th>
-					<th>Actions</th>
+
 				</tr>
 			</tfoot>
 			<tbody>
 				<tr th:each="row: ${rowResourceList.rows}"
 					th:id="'tableRow-' + ${#strings.substring(row.rowETag,5)}">
+					<td><button type="button" class="btn btn-default"
+							data-toggle="modal" data-target="#rowDetailModal"
+							th:attr="data-rowid=${row.rowId},data-rowetag=${row.rowETag}">View
+							Details</button>
+						<button type="button" class="btn btn-danger" data-toggle="modal"
+							data-target="#deleteRowModal"
+							th:attr="data-rowid=${row.rowId},data-rowetag=${row.rowETag}">Delete</button></td>
 					<td th:text="${row.rowETag}"></td>
 					<td th:text="${row.createUser}"
 						th:id="'createUser-' + ${#strings.substring(row.rowETag,5)}"></td>
@@ -83,13 +93,7 @@
 					<td th:text="${row.savepointTimestamp}"
 						th:id="'savepointTimestamp-' + ${#strings.substring(row.rowETag,5)}"></td>
 					<td th:text="${row.savepointCreator}"></td>
-					<td><button type="button" class="btn btn-default"
-							data-toggle="modal" data-target="#rowDetailModal"
-							th:attr="data-rowid=${row.rowId},data-rowetag=${row.rowETag}">View
-							Details</button>
-						<button type="button" class="btn btn-danger" data-toggle="modal"
-							data-target="#deleteRowModal"
-							th:attr="data-rowid=${row.rowId},data-rowetag=${row.rowETag}">Delete</button></td>
+
 				</tr>
 			</tbody>
 		</table>

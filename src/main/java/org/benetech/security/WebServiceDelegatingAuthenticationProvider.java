@@ -1,5 +1,6 @@
 package org.benetech.security;
 
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,15 +16,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.benetech.client.OdkClient;
 import org.benetech.constants.GeneralConsts;
-import org.benetech.controller.ajax.HealthCheckControllerAjax;
 import org.benetech.security.client.digest.DigestRestTemplateFactory;
-import org.benetech.util.OdkClientUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -76,10 +75,11 @@ public class WebServiceDelegatingAuthenticationProvider implements Authenticatio
       logger.info("Received an exception when getting granted roles");
       logger.info("Received " + e.getRawStatusCode());
       logger.info("Received " + e.getResponseBodyAsString());
-
-
       if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
         throw new BadCredentialsException("Unable to log in to remote web service.");
+      }
+      else {
+        throw new AuthenticationServiceException(e.getMessage());
       }
     }
 
@@ -96,9 +96,15 @@ public class WebServiceDelegatingAuthenticationProvider implements Authenticatio
       return token;
     } else {
       logger.info("Received a non-200 error code when getting granted roles: " + getResponse.getStatusCodeValue());
+      logger.info(getResponse.getBody());
       // Add more error cases here, or research how it is handled by default.
       // "Bad Credentials" is only one potential cause.
-      throw new BadCredentialsException("Unable to log in to remote web service.");
+      if (getResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+        throw new BadCredentialsException("Unable to log in to remote web service.");
+      }
+      else {
+        throw new AuthenticationServiceException(getResponse.getStatusCode().getReasonPhrase());
+      }
     }
 
   }

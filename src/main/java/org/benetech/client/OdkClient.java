@@ -64,6 +64,8 @@ public class OdkClient {
       "/odktables/{appId}/tables/{tableId}/ref/{schemaETag}/rows";
   public static String TABLE_SINGLE_ROW_ENDPOINT =
       "/odktables/{appId}/tables/{tableId}/ref/{schemaETag}/rows/{rowId}";
+  public static String TABLE_SINGLE_ROW_ATTACHMENT_MANIFEST =
+      "/odktables/{appId}/tables/{tableId}/ref/{schemaETag}/attachments/{rowId}/manifest";
   public static String TABLE_ATTACHMENT_MANIFEST_ENDPOINT =
       "/odktables/{appId}/tables/{tableId}/ref/{schemaETag}/attachments/manifest";
 
@@ -306,6 +308,20 @@ logger.info(response);
     return tableResource;
 
   }
+  
+  public OdkTablesFileManifest getSingleRowAttachments(String tableId, String schemaETag, String rowId) {
+
+    StringBuilder getSingleRowUrl = new StringBuilder(getUrl(TABLE_SINGLE_ROW_ATTACHMENT_MANIFEST)
+        .replace("{tableId}", tableId).replace("{schemaETag}", schemaETag).replace("{rowId}", rowId));
+
+    logger.info("Calling " + getSingleRowUrl);
+    ResponseEntity<OdkTablesFileManifest> getResponse = restTemplate.exchange(getSingleRowUrl.toString(),
+        HttpMethod.GET, null, new ParameterizedTypeReference<OdkTablesFileManifest>() {});
+    OdkTablesFileManifest rowAttachmentManifest = getResponse.getBody();
+    return rowAttachmentManifest;
+
+  }
+
 
   public String getUrl(String endpoint) {
     return odkUrl.toExternalForm()

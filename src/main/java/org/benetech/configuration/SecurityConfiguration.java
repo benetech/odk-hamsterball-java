@@ -14,7 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @EnableWebSecurity
-@Profile({"default","integrationtest", "unittest"})
+@Profile({"default", "integrationtest", "unittest"})
 @ComponentScan(basePackages = {"org.benetech"})
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -25,11 +25,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().ignoringAntMatchers("/file/**");
 
-    http.authorizeRequests().antMatchers("/css/**").permitAll().antMatchers("/healthcheck").permitAll() 
-        .antMatchers("/images/**").permitAll().antMatchers("/favicon.ico").permitAll().anyRequest()
-        .authenticated().and().formLogin().loginPage("/login").failureUrl("/login?error")
-        .permitAll().and().logout().permitAll();
-    //.and().exceptionHandling()        .accessDeniedPage("/login?error");
+    http.authorizeRequests().antMatchers("/css/**").permitAll().antMatchers("/healthcheck")
+        .permitAll().antMatchers("/images/**").permitAll().antMatchers("/favicon.ico").permitAll()
+        .anyRequest().authenticated().and().formLogin().loginPage("/login")
+        .failureUrl("/login?error").permitAll().and().logout().permitAll()
+        // .exceptionHandling() can hide information about errors, uncomment when debugging for more information
+        .and().exceptionHandling()
+        .accessDeniedPage("/login?error");
 
   }
 

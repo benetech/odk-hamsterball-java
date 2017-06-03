@@ -1,4 +1,72 @@
 <script>
+
+function getRowDetailAjax(tableId, rowId) {
+	return $
+	.ajax({
+		type : 'GET',
+		url : '/tables/' + tableId + '/rows/' + rowId,
+		success : function(result) {
+			//console.log(JSON.stringify(result, null, 4));
+			
+
+		},
+		error : function(result) {
+			alert(result.responseJSON.summaryMessage);
+		},
+		dataType : "json"
+	});
+	
+	
+}
+
+function getRowAttachmentsAjax(tableId, rowId) {
+	return $
+	.ajax({
+		type : 'GET',
+		url : '/tables/' + tableId + '/rows/' + rowId + '/attachments',
+		success : function(result) {
+			//console.log(JSON.stringify(result, null, 4));
+
+		},
+		error : function(result) {
+			alert(result.responseJSON.summaryMessage);
+		},
+		dataType : "json"
+	});
+}
+
+function getRowColumnMapAjax(tableId, rowId) {
+	return $
+	.ajax({
+		type : 'GET',
+		url : '/tables/' + tableId + '/rows/' + rowId + '/map',
+		success : function(result) {
+			//console.log(JSON.stringify(result, null, 4));
+
+		},
+		error : function(result) {
+			alert(result.responseJSON.summaryMessage);
+		},
+		dataType : "json"
+	});
+}
+
+function getQuestionsAjax(tableId) {
+	return $
+	.ajax({
+		type : 'GET',
+		url : '/tables/' + tableId + '/questions',
+		success : function(result) {
+			//console.log(JSON.stringify(result, null, 4));
+
+		},
+		error : function(result) {
+			alert(result.responseJSON.summaryMessage);
+		},
+		dataType : "json"
+	});	
+}
+
 	$('#rowDetailModal').on('show.bs.modal', function(event) {
 		var button = $(event.relatedTarget)
 		var rowId = button.data('rowid')
@@ -6,183 +74,87 @@
 		/*<![CDATA[*/
     	var tableId = "[[${tableId}]]";
 		/*]]>*/
+		
+		<!--/* https://stackoverflow.com/questions/3709597/wait-until-all-jquery-ajax-requests-are-done */-->
+		
+		$.when(
+			getRowDetailAjax(tableId, rowId), 
+			getRowAttachmentsAjax(tableId, rowId),
+			getRowColumnMapAjax(tableId, rowId),
+			getQuestionsAjax(tableId)).done(function(rowDetail, attachments, colMap, questions){
+				console.log("rowDetail");
+				console.log(JSON.stringify(rowDetail, null, 4));
+				console.log("attachments");
+				console.log(JSON.stringify(attachments, null, 4));
+				console.log("colMap");
+				console.log(JSON.stringify(colMap, null, 4));
+				console.log("questions");
+				console.log(JSON.stringify(questions, null, 4));
+			buildDetailDisplay(rowDetail, attachments, colMap,  questions);
+		})
 
-
-
-
-		$
-		.ajax({
-			type : 'GET',
-			url : '/tables/' + tableId + '/rows/' + rowId,
-			//data : $('#rowDetailForm').serialize(),
-			success : function(result) {
-				$("#rowDetailModal .modal-body")
-						.prepend(
-								'<div id="rowDetailResult" class="alert alert-success alert-dismissible" role="alert"/>');
-				$("#rowDetailResult")
-						.append(
-								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
-				$("#rowDetailResult").append(
-						'<strong>'
-								+ result.summaryMessage
-								+ '</strong>');
-				// Once the username is set, don't allow updates
-				var form = $('#rowDetailForm');
-				setAddOrEdit(form
-						.find('input#username').val(),
-						'edit');
-				dirtyAddEditModalButtons();
-			},
-			error : function(result) {
-				$("#rowDetailModal .modal-body")
-						.prepend(
-								'<div id="rowDetailResult" class="alert alert-danger alert-dismissible" role="alert"/>');
-				$("#rowDetailResult")
-						.append(
-								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
-				$("#rowDetailResult")
-						.append(
-								'<strong>'
-										+ result.responseJSON.summaryMessage
-										+ '</strong>');
-
-			},
-			dataType : "json"
-		});
 	})
 
-	function setAddOrEdit(username, action) {
-		$("#usernameFormGroup").empty();
-		$("#addUserChangePasswordSubForm").empty();
+	function buildDetailDisplay(rowDetail, attachments, colMap, questions) {
+		
+		$('#rowDetailBody').empty();
 
-		if (action == 'add') {
-			$("#usernameFormGroup")
-					.append(
-							'<label id="usernameLabel" class="control-label" for="officeId">Username: </label>');
-			$("#usernameLabel").append(
-					' <span id="username-error" class="text-danger"></span>');
-			$("#usernameFormGroup")
-					.append(
-							'<input type="text" name="username" id="username" class="form-control"></input>');
+		var rowDetailData = rowDetail[0];
+		var orderedColumns = rowDetailData.orderedColumns;
+		var questionData = questions[0];
+		var attachmentData = attachments[0];
+		var colMapData = colMap[0];
+		for (var colName in questionData) {
+		    var question = questionData[colName];
+		    var response = colMapData[colName];
+		    if (!response) { response = "[No response]"; }
+		    $('#rowDetailBody').append("<div><strong>" + question.displayText + "</strong></div>");
+		    if (response in attachmentData) {
+		    	var relativeUrl = attachmentData[response].relativeUrl;
+		    	var id = "detail-" + colName;
+		    	if (attachmentData[response].supportsThumbnail) {
+		    		$('#rowDetailBody').append("<div id='" + id + "'></div>");
+		    		$('#'+id).append(
+		    		"<a href='/attachment" + relativeUrl + "'></a>")
+		    		$('#'+id + " a").append(
+		    		"<img src='/attachment/thumb" + relativeUrl +"' alt='Thumbnail of "+ response +"'></img>");
 
-			// Insert shared password fields
-			var passwordSubForm = getChangePasswordSubform();
-			$("#addUserChangePasswordSubFormTarget").append(passwordSubForm);
-			$("#addEditButton").data("action", "add");
-		} else {
-			$("#usernameFormGroup")
-					.append(
-							'<span id="usernameLabel" class="label-look-span">Username: </span>');
-			$("#usernameFormGroup").append(' ' + username);
-			$("#usernameFormGroup")
-					.append(
-							'<input type="hidden" name="username" id="username" ></input>');
-			$("#addEditButton").data("action", "edit");
+		    	} else {
+				    $('#rowDetailBody').append("<div id='" + id + "'></div>");
+				    $('#'+id).append("<a href='/attachment" 
+				    		+ relativeUrl + "'>" + response + "</a>");
+		    	}
+		    }
+		    else {
+		    	$('#rowDetailBody').append("<div id='" + id + "'></div>").append(response);
+		    }
+		    
 
 		}
-		$('input#username').val(username)
+	    $('#rowDetailBody').append("<hr></hr>");
+	    $('#rowDetailBody').append("<div><strong>Row eTag</strong></div>");
+	    $('#rowDetailBody').append("<div>" + rowDetailData.rowETag + "</div>");
+	    $('#rowDetailBody').append("<div><strong>Row ID</strong></div>");
+	    $('#rowDetailBody').append("<div>" + rowDetailData.id + "</div>");
+	    $('#rowDetailBody').append("<div><strong>Create User</strong></div>");
+	    $('#rowDetailBody').append("<div>" + rowDetailData.createUser + "</div>");
+	    $('#rowDetailBody').append("<div><strong>Last Update User</strong></div>");
+	    $('#rowDetailBody').append("<div>" + rowDetailData.lastUpdateUser + "</div>");
+	    
+	    $('#rowDetailBody').append("<div><strong>Locale</strong></div>");
+	    $('#rowDetailBody').append("<div>" + rowDetailData.locale + "</div>");
 
+
+	    
+	    $('#rowDetailBody').append("<div><strong>Savepoint Timestamp</strong></div>");
+	    $('#rowDetailBody').append("<div>" + rowDetailData.savepointType + "</div>");
+	    $('#rowDetailBody').append("<div><strong>Savepoint Timestamp</strong></div>");
+	    $('#rowDetailBody').append("<div>" + rowDetailData.savepointTimestamp + "</div>");
+	    $('#rowDetailBody').append("<div><strong>Savepoint Creator</strong></div>");
+	    $('#rowDetailBody').append("<div>" + rowDetailData.savepointCreator + "</div>");
+	    $('#rowDetailBody').append("<div><strong>Self URI</strong></div>");
+	    $('#rowDetailBody').append("<div>" + rowDetailData.selfUri + "</div>");
 	}
 
-	function clearAddEditErrors() {
-		$("#rowDetailResult").remove();
-		$("#username-error").text('');
-		$("#fullname-error").text('');
-		$("#roles-error").text('');
-		$("#office-error").text('');
-		$("#password1-error").text('');
-		$("#password2-error").text('');
-		
-	}
-
-	// Change cancel button to close, make close button reload page and reread web service
-	function dirtyAddEditModalButtons() {
-		$("#rowDetailCloseCancelButton").text("Close");
-		$("#rowDetailCloseCancelButton").removeClass("data-dismiss");
-		$("#rowDetailCloseCancelButton").removeClass("btn-secondary");
-		$("#rowDetailCloseCancelButton").addClass("btn-primary");
-		$("#rowDetailCloseCancelButton").on('click', function(event) {
-			// "replace" does not add history item, if we want one for some reason, use "href"
-			window.location.replace("/admin/users");
-		})
-		$("#addEditButton").addClass("btn-secondary");
-		$("#addEditButton").removeClass("btn-primary");
-	}
-
-	// Reset cancel button, detach events
-	function resetAddEditModalButtons() {
-		$("#rowDetailCloseCancelButton").text("Cancel");
-		$("#rowDetailCloseCancelButton").addClass("data-dismiss");
-		$("#rowDetailCloseCancelButton").addClass("btn-secondary");
-		$("#rowDetailCloseCancelButton").removeClass("btn-primary");
-		$("#rowDetailCloseCancelButton").prop('onclick', null).off('click');
-		$("#addEditButton").removeClass("btn-secondary");
-		$("#addEditButton").addClass("btn-primary");
-	}
-
-	$('#addEditButton')
-			.on(
-					'click',
-					function(event) {
-						var button = $(event.target); // The clicked button
-						var action = button.data('action')
-
-						clearAddEditErrors();
-						$
-								.ajax({
-									type : 'POST',
-									url : '/admin/users/' + action,
-									data : $('#rowDetailForm').serialize(),
-									success : function(result) {
-										$("#rowDetailModal .modal-body")
-												.prepend(
-														'<div id="rowDetailResult" class="alert alert-success alert-dismissible" role="alert"/>');
-										$("#rowDetailResult")
-												.append(
-														'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
-										$("#rowDetailResult").append(
-												'<strong>'
-														+ result.summaryMessage
-														+ '</strong>');
-										// Once the username is set, don't allow updates
-										var form = $('#rowDetailForm');
-										setAddOrEdit(form
-												.find('input#username').val(),
-												'edit');
-										dirtyAddEditModalButtons();
-									},
-									error : function(result) {
-										$("#rowDetailModal .modal-body")
-												.prepend(
-														'<div id="rowDetailResult" class="alert alert-danger alert-dismissible" role="alert"/>');
-										$("#rowDetailResult")
-												.append(
-														'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
-										$("#rowDetailResult")
-												.append(
-														'<strong>'
-																+ result.responseJSON.summaryMessage
-																+ '</strong>');
-										$("#username-error")
-												.text(
-														result.responseJSON.errors.username);
-										$("#fullname-error")
-												.text(
-														result.responseJSON.errors.fullName);
-										$("#roles-error")
-												.text(
-														result.responseJSON.errors.roles);
-										$("#office-error")
-												.text(
-														result.responseJSON.errors.officeId);
-										$("#password1-error")
-										.text(
-												result.responseJSON.errors.password1);
-										$("#password2-error")
-										.text(
-												result.responseJSON.errors.password2);
-									},
-									dataType : "json"
-								});
-					});
+;
 </script>

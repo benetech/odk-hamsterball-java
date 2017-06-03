@@ -60,13 +60,14 @@
 					</div>
 				</div>
 			</fieldset>
-			<div class="form-group">
+			<div th:if="${offices == null or #lists.isEmpty(offices)}">
+			Please create at least one office before uploading new forms.</div>
+			<div class="form-group" th:if="${offices != null and not #lists.isEmpty(offices)}">
 				<div class="col-sm-offset-2 col-sm-10">
 					<input class="btn btn-primary" type="submit"
 						value="Upload Zipped Form"></input>
 				</div>
 			</div>
-
 		</form>
 	</section>
 </body>
