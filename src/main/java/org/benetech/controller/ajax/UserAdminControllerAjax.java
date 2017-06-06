@@ -6,6 +6,7 @@ import org.benetech.ajax.AjaxFormResponse;
 import org.benetech.ajax.AjaxFormResponseFactory;
 import org.benetech.client.OdkClient;
 import org.benetech.client.OdkClientFactory;
+import org.benetech.constants.GeneralConsts;
 import org.benetech.model.form.ChangePasswordAdminForm;
 import org.benetech.model.form.ChangePasswordForm;
 import org.benetech.model.form.NewUserEntityForm;
@@ -90,6 +91,7 @@ public class UserAdminControllerAjax {
   @PostMapping(value="/admin/users/edit", produces = "application/json")
   public ResponseEntity<?> editUser(@ModelAttribute("user") @Validated UserEntityForm user,
       BindingResult bindingResult, Model model) {
+    HttpStatus status = null;
     if (bindingResult.hasErrors()) {
       AjaxFormResponse response =
           responseFactory.getAjaxFormResponse(bindingResult, "Please correct errors in the form.");
@@ -99,7 +101,13 @@ public class UserAdminControllerAjax {
     OdkClient odkClient = odkClientFactory.getOdkClient();
     logger.debug("Updating user " + user);
     UserEntity userEntity = user.getUserEntity();
-    HttpStatus status = odkClient.updateUser(userEntity);
+    
+    if (GeneralConsts.ANONYMOUS_USERNAME.equals(user.getUsername())) {
+      status = odkClient.updateAnonymousUser(userEntity);
+    }
+    else {
+      status = odkClient.updateUser(userEntity);
+    }
     AjaxFormResponse response = new AjaxFormResponse("User " + user.getUsername() + " updated.");
     return ResponseEntity.ok(response);
   }

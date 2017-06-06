@@ -54,6 +54,7 @@ public class OdkClient {
   public static String ROLES_LIST_ENDPOINT = "/roles/list";
 
   public static String ADMIN_USERS_ENDPOINT = "/admin/users";
+  public static String ADMIN_ANONYMOUS_USER_ENDPOINT = "/admin/users/anonymous";
   public static String ADMIN_DELETE_USER_ENDPOINT = "/admin/users/username:{username}";
   public static String ADMIN_CHANGE_PASSWORD = "/admin/users/username:{username}/password";
 
@@ -163,6 +164,17 @@ public class OdkClient {
 
     return postResponse.getStatusCode();
   }
+  
+  public HttpStatus updateAnonymousUser(UserEntity userEntity) {
+    String postUserUrl = odkUrl.toExternalForm() + ADMIN_ANONYMOUS_USER_ENDPOINT;
+
+    HttpEntity<UserEntity> postUserEntity = new HttpEntity<>(userEntity);
+    ResponseEntity<UserEntity> postResponse =
+        restTemplate.exchange(postUserUrl, HttpMethod.POST, postUserEntity, UserEntity.class);
+
+    return postResponse.getStatusCode();
+  }
+
 
   public HttpStatus changePasswordUser(String username, String password) {
     String postUserUrl =

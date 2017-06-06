@@ -31,12 +31,13 @@
 		// anonymous can't edit username or full name
 		if (username == 'anonymous') {
 			modal.find('input#fullName').prop('disabled', true);
-			modal.find('input#username').prop('disabled', true);
+			modal.find('select#officeId').prop('disabled', true);
+			modal.find('input[value="ROLE_SITE_ACCESS_ADMIN"]').prop('disabled', true);
 		} else {
 			modal.find('input#fullName').prop('disabled', false);
-			modal.find('input#username').prop('disabled', false);
+			modal.find('select#officeId').prop('disabled', false);
+			modal.find('input[value="ROLE_SITE_ACCESS_ADMIN"]').prop('disabled', false);
 		}
-
 	})
 
 	function setAddOrEdit(username, action) {

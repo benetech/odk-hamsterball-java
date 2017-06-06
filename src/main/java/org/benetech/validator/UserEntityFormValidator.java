@@ -23,10 +23,10 @@ public class UserEntityFormValidator implements Validator {
     if (StringUtils.isEmpty(user.getUsername())) {
       errors.rejectValue("username", "empty");
     }
-    if (StringUtils.isEmpty(user.getFullName())) {
+    if (!StringUtils.equals(user.getUsername(), "anonymous") && StringUtils.isEmpty(user.getFullName())) {
       errors.rejectValue("fullName", "empty");
     }
-    if (StringUtils.isEmpty(user.getOfficeId())) {
+    if (!StringUtils.equals(user.getUsername(), "anonymous") && StringUtils.isEmpty(user.getOfficeId())) {
       errors.rejectValue("officeId", "empty");
     }
   }
