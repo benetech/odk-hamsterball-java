@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <property name="LOG_FILE"
+        value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}" />
+    <include
+        resource="org/springframework/boot/logging/logback/file-appender.xml" />
+    <include
+        resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+	<logger name="org.apache.http.impl.execchain" level="DEBUG"
+		additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+	</logger> 
+		<logger name="org.apache.http.client" level="DEBUG"
+		additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+	</logger> 
+			<logger name="org.apache.http.conn" level="DEBUG"
+		additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+	</logger> 
+			<logger name="org.apache.http.impl.conn" level="DEBUG"
+		additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+	</logger> 
+				<logger name="org.apache.http.impl.client" level="DEBUG"
+		additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+	</logger> 
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>
