@@ -105,6 +105,7 @@ function getQuestionsAjax(tableId) {
 		var attachmentData = attachments[0];
 		var colMapData = colMap[0];
 		for (var colName in questionData) {
+			if (colName) {
 		    var question = questionData[colName];
 		    var response = colMapData[colName];
 		    if (!response) { response = "[No response]"; }
@@ -130,7 +131,7 @@ function getQuestionsAjax(tableId) {
 		    	$('#rowDetailBody').append("<div id='" + id + "'></div>").append(response);
 		    }
 		    
-
+			}
 		}
 	    $('#rowDetailBody').append("<hr></hr>");
 	    $('#rowDetailBody').append("<div><strong>Row eTag</strong></div>");
