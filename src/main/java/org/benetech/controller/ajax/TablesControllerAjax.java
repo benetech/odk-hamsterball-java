@@ -134,7 +134,7 @@ public class TablesControllerAjax {
         surveyQuestion.setName(getTextNullSafe(surveyNode, "name", "_ERROR_DEFAULT"));
         surveyQuestion.setDisplayText(getDisplayTextNullSafe(surveyNode));
         surveyQuestion.setType(getTextNullSafe(surveyNode, "type", ""));
-        surveyQuestion.setRowNum(surveyNode.findPath("_row_num").asInt());
+        surveyQuestion.setRowNum(getIntNullSafe(surveyNode,"_row_num"));
         surveyQuestionMap.put(surveyQuestion.getName(), surveyQuestion);
       }
     } catch (JsonProcessingException e) {
@@ -145,6 +145,14 @@ public class TablesControllerAjax {
 
     return ResponseEntity.ok(surveyQuestionMap);
 
+  }
+  
+  private int getIntNullSafe(JsonNode node, String path) {
+    int result = 0;
+    if (node.findPath(path) != null && !node.findPath(path).isNull()) {
+      result = node.findPath(path).asInt();
+    }
+    return result;
   }
 
   private String getTextNullSafe(JsonNode node, String path, String defaultText) {
