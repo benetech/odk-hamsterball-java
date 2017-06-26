@@ -1,12 +1,10 @@
 package org.benetech.client;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.benetech.constants.GeneralConsts;
@@ -23,7 +21,7 @@ import org.opendatakit.api.offices.entity.RegionalOffice;
 import org.opendatakit.api.users.entity.RoleDescription;
 import org.opendatakit.api.users.entity.UserEntity;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -34,8 +32,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OdkClient {
 
@@ -164,7 +160,7 @@ public class OdkClient {
 
     return postResponse.getStatusCode();
   }
-  
+
   public HttpStatus updateAnonymousUser(UserEntity userEntity) {
     String postUserUrl = odkUrl.toExternalForm() + ADMIN_ANONYMOUS_USER_ENDPOINT;
 
@@ -256,12 +252,12 @@ public class OdkClient {
     return manifest;
 
   }
-  
+
   public String getFormDefinition(String url) {
-    ResponseEntity<String> getResponse = restTemplate.exchange(url,
-        HttpMethod.GET, null, String.class);
+    ResponseEntity<String> getResponse =
+        restTemplate.exchange(url, HttpMethod.GET, null, String.class);
     String response = getResponse.getBody();
-logger.info(response);
+    logger.info(response);
     return response;
   }
 
@@ -284,7 +280,7 @@ logger.info(response);
         .replace("{tableId}", tableId).replace("{schemaETag}", schemaETag));
     getRowListUrl.append("?sortColumn=" + sortColumn);
     getRowListUrl.append("&ascending=" + ascending);
-   
+
 
     logger.debug("Calling " + getRowListUrl);
     ResponseEntity<RowResourceList> getResponse = restTemplate.exchange(getRowListUrl.toString(),
@@ -293,7 +289,7 @@ logger.info(response);
     return tableResource;
 
   }
-  
+
   public RowOutcomeList putRowList(String tableId, String schemaETag, RowList rowList) {
 
     StringBuilder getRowListUrl = new StringBuilder(getUrl(TABLE_ROWS_ENDPOINT)
@@ -302,16 +298,17 @@ logger.info(response);
     logger.debug("Calling " + getRowListUrl);
 
     HttpEntity<RowList> putRowListEntity = new HttpEntity<>(rowList);
-    ResponseEntity<RowOutcomeList> postResponse =
-        restTemplate.exchange(getRowListUrl.toString(), HttpMethod.PUT, putRowListEntity, RowOutcomeList.class);
-   
+    ResponseEntity<RowOutcomeList> postResponse = restTemplate.exchange(getRowListUrl.toString(),
+        HttpMethod.PUT, putRowListEntity, RowOutcomeList.class);
+
     return postResponse.getBody();
   }
-  
+
   public RowResource getSingleRow(String tableId, String schemaETag, String rowId) {
 
-    StringBuilder getSingleRowUrl = new StringBuilder(getUrl(TABLE_SINGLE_ROW_ENDPOINT)
-        .replace("{tableId}", tableId).replace("{schemaETag}", schemaETag).replace("{rowId}", rowId));
+    StringBuilder getSingleRowUrl =
+        new StringBuilder(getUrl(TABLE_SINGLE_ROW_ENDPOINT).replace("{tableId}", tableId)
+            .replace("{schemaETag}", schemaETag).replace("{rowId}", rowId));
 
     logger.info("Calling " + getSingleRowUrl);
     ResponseEntity<RowResource> getResponse = restTemplate.exchange(getSingleRowUrl.toString(),
@@ -320,15 +317,18 @@ logger.info(response);
     return tableResource;
 
   }
-  
-  public OdkTablesFileManifest getSingleRowAttachments(String tableId, String schemaETag, String rowId) {
 
-    StringBuilder getSingleRowUrl = new StringBuilder(getUrl(TABLE_SINGLE_ROW_ATTACHMENT_MANIFEST)
-        .replace("{tableId}", tableId).replace("{schemaETag}", schemaETag).replace("{rowId}", rowId));
+  public OdkTablesFileManifest getSingleRowAttachments(String tableId, String schemaETag,
+      String rowId) {
+
+    StringBuilder getSingleRowUrl =
+        new StringBuilder(getUrl(TABLE_SINGLE_ROW_ATTACHMENT_MANIFEST).replace("{tableId}", tableId)
+            .replace("{schemaETag}", schemaETag).replace("{rowId}", rowId));
 
     logger.info("Calling " + getSingleRowUrl);
-    ResponseEntity<OdkTablesFileManifest> getResponse = restTemplate.exchange(getSingleRowUrl.toString(),
-        HttpMethod.GET, null, new ParameterizedTypeReference<OdkTablesFileManifest>() {});
+    ResponseEntity<OdkTablesFileManifest> getResponse =
+        restTemplate.exchange(getSingleRowUrl.toString(), HttpMethod.GET, null,
+            new ParameterizedTypeReference<OdkTablesFileManifest>() {});
     OdkTablesFileManifest rowAttachmentManifest = getResponse.getBody();
     return rowAttachmentManifest;
 
@@ -353,18 +353,15 @@ logger.info(response);
     String postUploadUrl = odkUrl.toExternalForm() + (FORM_UPLOAD_ENDPOINT
         .replace("{appId}", odkAppId).replace("{odkClientVersion}", odkClientVersion));
 
-    File tempFile = null;
-    try {
-      String extension = "." + FilenameUtils.getExtension(file.getOriginalFilename());
-      tempFile = File.createTempFile("temp", extension);
-      file.transferTo(tempFile);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
     MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
+    parts.add(GeneralConsts.ZIP_FILE, new ByteArrayResource(file.getBytes()) {
+      @Override
+      public String getFilename() {
+        // Causes errors if the file does not have a name.
+        return "temp.zip";
+      }
+    });
 
-    parts.add(GeneralConsts.ZIP_FILE, new FileSystemResource(tempFile));
     for (String office : offices) {
       parts.add(GeneralConsts.OFFICE_ID, office);
     }
@@ -373,6 +370,8 @@ logger.info(response);
     header.setContentType(MediaType.MULTIPART_FORM_DATA);
 
     HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(parts, header);
+
+
     ResponseEntity<FormUploadResult> entity =
         restTemplate.postForEntity(postUploadUrl, requestEntity, FormUploadResult.class);
     return entity.getBody();
