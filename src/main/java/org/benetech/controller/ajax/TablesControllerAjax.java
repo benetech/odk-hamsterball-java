@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -134,7 +136,7 @@ public class TablesControllerAjax {
         surveyQuestion.setName(getTextNullSafe(surveyNode, "name", "_ERROR_DEFAULT"));
         surveyQuestion.setDisplayText(getDisplayTextNullSafe(surveyNode));
         surveyQuestion.setType(getTextNullSafe(surveyNode, "type", ""));
-        surveyQuestion.setRowNum(getIntNullSafe(surveyNode,"_row_num"));
+        surveyQuestion.setRowNum(getIntNullSafe(surveyNode, "_row_num"));
         surveyQuestionMap.put(surveyQuestion.getName(), surveyQuestion);
       }
     } catch (JsonProcessingException e) {
@@ -146,7 +148,7 @@ public class TablesControllerAjax {
     return ResponseEntity.ok(surveyQuestionMap);
 
   }
-  
+
   private int getIntNullSafe(JsonNode node, String path) {
     int result = 0;
     if (node.findPath(path) != null && !node.findPath(path).isNull()) {
@@ -155,7 +157,7 @@ public class TablesControllerAjax {
     return result;
   }
 
-  private String getTextNullSafe(JsonNode node, String path, String defaultText) {
+  String getTextNullSafe(JsonNode node, String path, String defaultText) {
     String result = "";
     if (node.findPath(path) == null || node.findPath(path).isNull()) {
       result = defaultText;
@@ -165,7 +167,7 @@ public class TablesControllerAjax {
     return result;
   }
 
-  private String getDisplayTextNullSafe(JsonNode node) {
+  String getDisplayTextNullSafe(JsonNode node) {
     String result = "";
     JsonNode displayNode = node.findPath("display");
 
@@ -175,10 +177,26 @@ public class TablesControllerAjax {
       JsonNode textNode = displayNode.get("text");
       JsonNode imageNode = displayNode.get("image");
       if (textNode != null && !textNode.isNull()) {
-        result = textNode.asText();
+        JsonNode defaultNode = textNode.get("default");
+        if (defaultNode != null && !defaultNode.isNull()) {
+          result = defaultNode.asText();
+          Iterator<Entry<String, JsonNode>> children = textNode.fields();
+          while (children.hasNext()) {
+            Map.Entry<String, JsonNode> entry = (Map.Entry<String, JsonNode>) children.next();
+            logger.info(entry.getKey() + " " + entry.getValue());
+            if (!entry.getKey().equalsIgnoreCase("default")) {
+              JsonNode childNode = entry.getValue();
+              if (childNode != null && !childNode.isNull()) {
+                result = result + " / " + childNode.asText();
+              }
+            }
+          }
+        } else {
+          result = textNode.asText();
+        }
       } else if (imageNode != null && !imageNode.isNull()) {
         result = imageNode.asText();
-      } else{
+      } else {
         result = "";
       }
     }
