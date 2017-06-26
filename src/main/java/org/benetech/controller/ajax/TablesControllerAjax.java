@@ -124,21 +124,10 @@ public class TablesControllerAjax {
     Map<String, SurveyQuestion> surveyQuestionMap = new HashMap<String, SurveyQuestion>();
     try {
       JsonNode rootNode = new ObjectMapper().readValue(jsonFormDefinition, JsonNode.class);
-
+      surveyQuestionMap = getSurveyQuestionMap(rootNode);
       logger.info("jsonFormDefinition:\n" + jsonFormDefinition);
 
-      final JsonNode xlsNode = rootNode.path("xlsx");
-      final JsonNode surveyNodeJson = xlsNode.path("survey");
-
-
-      for (final JsonNode surveyNode : surveyNodeJson) {
-        SurveyQuestion surveyQuestion = new SurveyQuestion();
-        surveyQuestion.setName(getTextNullSafe(surveyNode, "name", "_ERROR_DEFAULT"));
-        surveyQuestion.setDisplayText(getDisplayTextNullSafe(surveyNode));
-        surveyQuestion.setType(getTextNullSafe(surveyNode, "type", ""));
-        surveyQuestion.setRowNum(getIntNullSafe(surveyNode, "_row_num"));
-        surveyQuestionMap.put(surveyQuestion.getName(), surveyQuestion);
-      }
+      
     } catch (JsonProcessingException e) {
       logger.error(e);
     } catch (IOException e) {
@@ -148,6 +137,60 @@ public class TablesControllerAjax {
     return ResponseEntity.ok(surveyQuestionMap);
 
   }
+  
+  Map<String, SurveyQuestion> getSurveyQuestionMap(JsonNode rootNode)
+  {
+    Map<String, SurveyQuestion> surveyQuestionMap = new HashMap<String, SurveyQuestion>();
+    final JsonNode xlsNode = rootNode.path("xlsx");
+    Iterator<JsonNode> surveyLevelChildren = xlsNode.iterator();
+    while (surveyLevelChildren.hasNext()) {
+      JsonNode surveyLevelChild = surveyLevelChildren.next();
+      Iterator<JsonNode> questionLevelChildren = surveyLevelChild.iterator();
+      while (questionLevelChildren.hasNext()) {
+        JsonNode questionLevelChild = questionLevelChildren.next();
+        List<JsonNode> questionNodes = getQuestionNodes(questionLevelChild);
+        for (final JsonNode questionNode : questionNodes) {
+          SurveyQuestion surveyQuestion = new SurveyQuestion();
+          surveyQuestion.setName(getTextNullSafe(questionNode, "name", "_ERROR_DEFAULT"));
+          surveyQuestion.setDisplayText(getDisplayTextNullSafe(questionNode));
+          surveyQuestion.setType(getTextNullSafe(questionNode, "type", ""));
+          surveyQuestion.setRowNum(getIntNullSafe(questionNode, "_row_num"));
+          surveyQuestionMap.put(surveyQuestion.getName(), surveyQuestion);
+        }
+      }
+    }
+    return surveyQuestionMap;
+  }
+
+  /**
+   * Search deeply for nodes that are probably questions (with name and display nodes)
+   * 
+   * @param surveyNode
+   * @return
+   */
+  List<JsonNode> getQuestionNodes(JsonNode surveyNode) {
+    List<JsonNode> result = new ArrayList<JsonNode>();
+    List<JsonNode> nodesToVisit = new ArrayList<JsonNode>();
+    nodesToVisit.add(surveyNode);
+    while (!nodesToVisit.isEmpty()) {
+      JsonNode currentNode = nodesToVisit.remove(0);
+      JsonNode nameNode = currentNode.get("name");
+      JsonNode displayTextNode = currentNode.get("display");
+      if (nameNode == null || nameNode.isNull() || displayTextNode == null
+          || displayTextNode.isNull()) {
+        Iterator<JsonNode> children = currentNode.iterator();
+        while (children.hasNext()) {
+          JsonNode child = children.next();
+          nodesToVisit.add(child);
+        }
+      } else {
+        result.add(currentNode);
+      }
+    }
+    return result;
+  }
+
+
 
   private int getIntNullSafe(JsonNode node, String path) {
     int result = 0;

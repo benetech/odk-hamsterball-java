@@ -3,11 +3,21 @@ package org.benetech.controller.ajax;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.benetech.ajax.SurveyQuestion;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -19,7 +29,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class TablesControllerAjaxTest {
   private ObjectMapper mapper = new ObjectMapper();
   TablesControllerAjax controller;
-  Log logger = LogFactory.getLog(TablesControllerAjaxTest.class);
+  private final Log logger = LogFactory.getLog(TablesControllerAjaxTest.class);
+  private final PathMatchingResourcePatternResolver pmrpr = new PathMatchingResourcePatternResolver();
 
 
   @Before
@@ -28,7 +39,7 @@ public class TablesControllerAjaxTest {
   }
 
   @Test
-  public void parseDisplayTextTest() throws Exception {
+  public void testParseDisplayText() throws Exception {
     logger.info("parseDisplayTextTest");
 
     StringBuilder jsonBuilder = new StringBuilder();
@@ -51,7 +62,7 @@ public class TablesControllerAjaxTest {
   }
 
   @Test
-  public void parseDisplayTextMultiLangTest() throws Exception {
+  public void testParseDisplayTextMultiLang() throws Exception {
     logger.info("parseDisplayTextMultiLangTest");
 
     StringBuilder jsonBuilder = new StringBuilder();
@@ -76,4 +87,33 @@ public class TablesControllerAjaxTest {
 
     logger.info("Display Text: " + result);
   }
+  
+  @Test
+  public void testParseDeepQuestions() throws Exception {
+    logger.info("parseDisplayTextTest");
+    final File sampleForm = pmrpr.getResource("classpath:formDef/madison_sample_formDef.json").getFile();
+
+    String formDef = FileUtils.readFileToString(sampleForm);
+
+    JsonNode node = mapper.readTree(formDef);
+
+    List<JsonNode> result = controller.getQuestionNodes(node);
+
+    logger.info("Display Text: " + result);
+  }
+
+  @Test
+  public void testGetSurveyQuestionMap() throws Exception {
+    logger.info("parseDisplayTextTest");
+    final File sampleForm = pmrpr.getResource("classpath:formDef/madison_sample_formDef.json").getFile();
+
+    String formDef = FileUtils.readFileToString(sampleForm);
+
+    JsonNode node = mapper.readTree(formDef);
+
+    Map<String, SurveyQuestion> result = controller.getSurveyQuestionMap(node);
+
+    logger.info("Display Text: " + result);
+  }
+  
 }
