@@ -109,9 +109,10 @@ function getQuestionsAjax(tableId) {
 		    var response = colMapData[colName];
 		    if (!response) { response = "[No response]"; }
 		    $('#rowDetailBody').append("<div><strong>" + question.displayText + "</strong></div>");
+		    var id = "detail-" + colName;
 		    if (response in attachmentData) {
 		    	var relativeUrl = attachmentData[response].relativeUrl;
-		    	var id = "detail-" + colName;
+		    	
 		    	if (attachmentData[response].supportsThumbnail) {
 		    		$('#rowDetailBody').append("<div id='" + id + "'></div>");
 		    		$('#'+id).append(
