@@ -54,7 +54,7 @@ public class TablesControllerAjax {
   @Autowired
   OdkClientFactory odkClientFactory;
 
-  @GetMapping(value = "/tables/{tableId}/rows/{rowId}", produces = "application/json")
+  @GetMapping(value = "/tables/{tableId}/rows/{rowId}", produces = "application/json;charset=UTF-8")
   public ResponseEntity<?> getRowDetail(@PathVariable("tableId") String tableId,
       @PathVariable(name = "rowId") String rowId, Model model) {
 
@@ -66,7 +66,7 @@ public class TablesControllerAjax {
     return ResponseEntity.ok(rowResource);
   }
 
-  @GetMapping(value = "/tables/{tableId}/rows/{rowId}/map", produces = "application/json")
+  @GetMapping(value = "/tables/{tableId}/rows/{rowId}/map", produces = "application/json;charset=UTF-8")
   public ResponseEntity<?> getRowDetailMap(@PathVariable("tableId") String tableId,
       @PathVariable(name = "rowId") String rowId, Model model) {
 
@@ -89,7 +89,7 @@ public class TablesControllerAjax {
     return ResponseEntity.ok(mappedRowValues);
   }
 
-  @GetMapping(value = "/tables/{tableId}/rows/{rowId}/attachments", produces = "application/json")
+  @GetMapping(value = "/tables/{tableId}/rows/{rowId}/attachments", produces = "application/json;charset=UTF-8")
   public ResponseEntity<?> getRowAttachments(@PathVariable("tableId") String tableId,
       @PathVariable(name = "rowId") String rowId, Model model) {
 
@@ -107,7 +107,7 @@ public class TablesControllerAjax {
     return ResponseEntity.ok(entryMap);
   }
 
-  @GetMapping(value = "/tables/{tableId}/questions", produces = "application/json")
+  @GetMapping(value = "/tables/{tableId}/questions", produces = "application/json;charset=UTF-8")
   public ResponseEntity<?> getFormJson(@PathVariable("tableId") String tableId) {
     OdkClient odkClient = odkClientFactory.getOdkClient();
 
@@ -226,7 +226,6 @@ public class TablesControllerAjax {
           Iterator<Entry<String, JsonNode>> children = textNode.fields();
           while (children.hasNext()) {
             Map.Entry<String, JsonNode> entry = (Map.Entry<String, JsonNode>) children.next();
-            logger.info(entry.getKey() + " " + entry.getValue());
             if (!entry.getKey().equalsIgnoreCase("default")) {
               JsonNode childNode = entry.getValue();
               if (childNode != null && !childNode.isNull()) {

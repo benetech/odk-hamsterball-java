@@ -41,7 +41,7 @@ public class OfficeAdminControllerAjax {
   }
 
   @Secured({"ROLE_SITE_ACCESS_ADMIN"})
-  @PostMapping(value = "/admin/offices", produces = "application/json")
+  @PostMapping(value = "/admin/offices", produces = "application/json;charset=UTF-8")
   public ResponseEntity<?> addUpdateOffice(@ModelAttribute("office") @Validated RegionalOffice office,
       BindingResult bindingResult, Model model) {
     if (bindingResult.hasErrors()) {

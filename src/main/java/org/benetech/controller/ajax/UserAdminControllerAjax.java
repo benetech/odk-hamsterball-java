@@ -65,7 +65,7 @@ public class UserAdminControllerAjax {
   }
 
   @Secured({"ROLE_SITE_ACCESS_ADMIN"})
-  @PostMapping(value="/admin/users/password", produces = "application/json")
+  @PostMapping(value="/admin/users/password", produces = "application/json;charset=UTF-8")
   public ResponseEntity<?> changePasswordUserAjax(
       @ModelAttribute("passwordForm") @Validated ChangePasswordAdminForm passwordForm,
       BindingResult bindingResult, Model model) {
@@ -88,7 +88,7 @@ public class UserAdminControllerAjax {
   }
   
   @Secured({"ROLE_SITE_ACCESS_ADMIN"})
-  @PostMapping(value="/admin/users/edit", produces = "application/json")
+  @PostMapping(value="/admin/users/edit", produces = "application/json;charset=UTF-8")
   public ResponseEntity<?> editUser(@ModelAttribute("user") @Validated UserEntityForm user,
       BindingResult bindingResult, Model model) {
     HttpStatus status = null;
@@ -113,7 +113,7 @@ public class UserAdminControllerAjax {
   }
   
   @Secured({"ROLE_SITE_ACCESS_ADMIN"})
-  @PostMapping(value="/admin/users/add", produces = "application/json")
+  @PostMapping(value="/admin/users/add", produces = "application/json;charset=UTF-8")
   public ResponseEntity<?> addUser(@ModelAttribute("newuser") @Validated NewUserEntityForm newuser,
       BindingResult bindingResult, Model model) {
     if (bindingResult.hasErrors()) {

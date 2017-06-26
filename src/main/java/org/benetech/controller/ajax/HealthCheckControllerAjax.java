@@ -11,7 +11,7 @@ public class HealthCheckControllerAjax {
 
   private static Log logger = LogFactory.getLog(HealthCheckControllerAjax.class);
 
-  @GetMapping(value = "/healthcheck", produces = "application/json")
+  @GetMapping(value = "/healthcheck", produces = "application/json;charset=UTF-8")
   public ResponseEntity<?> healthCheck() {
 
     return ResponseEntity.ok("Health Check OK");
