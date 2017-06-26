@@ -76,7 +76,8 @@ public class TablesControllerAjax {
       if (value.column.toLowerCase().endsWith("_contentType".toLowerCase())) {
         // skip
       } else if (value.column.toLowerCase().endsWith("_urifragment")) {
-        String origColumnName = value.column.substring(0, value.column.length() - "_uriFragment".length());
+        String origColumnName =
+            value.column.substring(0, value.column.length() - "_uriFragment".length());
         mappedRowValues.put(origColumnName, value.value);
       } else {
         mappedRowValues.put(value.column, value.value);
@@ -130,9 +131,9 @@ public class TablesControllerAjax {
 
       for (final JsonNode surveyNode : surveyNodeJson) {
         SurveyQuestion surveyQuestion = new SurveyQuestion();
-        surveyQuestion.setName(surveyNode.findPath("name").asText("_ERROR_DEFAULT"));
-        surveyQuestion.setDisplayText(surveyNode.findPath("display").get("text").asText());
-        surveyQuestion.setType(surveyNode.findPath("type").asText());
+        surveyQuestion.setName(getTextNullSafe(surveyNode, "name", "_ERROR_DEFAULT"));
+        surveyQuestion.setDisplayText(getDisplayTextNullSafe(surveyNode));
+        surveyQuestion.setType(getTextNullSafe(surveyNode, "type", ""));
         surveyQuestion.setRowNum(surveyNode.findPath("_row_num").asInt());
         surveyQuestionMap.put(surveyQuestion.getName(), surveyQuestion);
       }
@@ -145,5 +146,36 @@ public class TablesControllerAjax {
     return ResponseEntity.ok(surveyQuestionMap);
 
   }
+
+  private String getTextNullSafe(JsonNode node, String path, String defaultText) {
+    String result = "";
+    if (node.findPath(path) == null || node.findPath(path).isNull()) {
+      result = defaultText;
+    } else {
+      result = node.findPath(path).asText();
+    }
+    return result;
+  }
+
+  private String getDisplayTextNullSafe(JsonNode node) {
+    String result = "";
+    JsonNode displayNode = node.findPath("display");
+
+    if (displayNode == null || displayNode.isNull()) {
+      result = "";
+    } else {
+      JsonNode textNode = displayNode.get("text");
+      JsonNode imageNode = displayNode.get("image");
+      if (textNode != null && !textNode.isNull()) {
+        result = textNode.asText();
+      } else if (imageNode != null && !imageNode.isNull()) {
+        result = imageNode.asText();
+      } else{
+        result = "";
+      }
+    }
+    return result;
+  }
+
 
 }
