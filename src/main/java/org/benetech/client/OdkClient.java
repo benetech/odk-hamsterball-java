@@ -348,23 +348,25 @@ public class OdkClient {
    * @return
    * @throws IOException File needs to be converted to FileSystemResource before transmission.
    * @see http://stackoverflow.com/questions/41632647/multipart-file-upload-with-spring-resttemplate-and-jackson
+   * @see https://stackoverflow.com/questions/42212557/uploading-a-list-of-multipartfile-with-spring-4-resttemplate-java-client-rest
    */
   public FormUploadResult uploadFile(MultipartFile file, List<String> offices) throws IOException {
     String postUploadUrl = odkUrl.toExternalForm() + (FORM_UPLOAD_ENDPOINT
         .replace("{appId}", odkAppId).replace("{odkClientVersion}", odkClientVersion));
 
     MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
-    parts.add(GeneralConsts.ZIP_FILE, new ByteArrayResource(file.getBytes()) {
-      @Override
-      public String getFilename() {
-        // Causes errors if the file does not have a name.
-        return "temp.zip";
-      }
-    });
-
+    
     for (String office : offices) {
       parts.add(GeneralConsts.OFFICE_ID, office);
     }
+    
+    parts.add(GeneralConsts.ZIP_FILE, new ByteArrayResource(file.getBytes()) {
+      @Override
+      public String getFilename() {
+        // Causes errors if the file does not have a name ending in .zip.
+        return "temp.zip";
+      }
+    });
 
     HttpHeaders header = new HttpHeaders();
     header.setContentType(MediaType.MULTIPART_FORM_DATA);
