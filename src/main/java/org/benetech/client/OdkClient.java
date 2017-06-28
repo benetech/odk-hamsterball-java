@@ -350,7 +350,10 @@ public class OdkClient {
    * @see http://stackoverflow.com/questions/41632647/multipart-file-upload-with-spring-resttemplate-and-jackson
    * @see https://stackoverflow.com/questions/42212557/uploading-a-list-of-multipartfile-with-spring-4-resttemplate-java-client-rest
    */
-  public FormUploadResult uploadFile(MultipartFile file, List<String> offices) throws IOException {
+  public FormUploadResult oldUploadFile(MultipartFile file, List<String> offices)
+      throws IOException {
+
+
     String postUploadUrl = odkUrl.toExternalForm() + (FORM_UPLOAD_ENDPOINT
         .replace("{appId}", odkAppId).replace("{odkClientVersion}", odkClientVersion));
 
@@ -388,5 +391,12 @@ public class OdkClient {
         restTemplate.postForEntity(postUploadUrl, requestEntity, FormUploadResult.class);
     return entity.getBody();
   }
+  
+  
+  public FormUploadResult uploadFile(MultipartFile file, List<String> offices) throws IOException
+  {
+    return OdkUploadClient.uploadFile(this, restTemplate, file, offices);
+  }
+  
 
 }

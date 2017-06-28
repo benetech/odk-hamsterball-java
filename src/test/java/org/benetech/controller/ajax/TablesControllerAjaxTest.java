@@ -1,5 +1,11 @@
 package org.benetech.controller.ajax;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+
+import static org.hamcrest.Matchers.isEmptyString;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -58,7 +64,6 @@ public class TablesControllerAjaxTest {
 
     String result = controller.getDisplayTextNullSafe(node);
     assertThat(result, is("Your salary?"));
-    logger.info("Display Text: " + result);
   }
 
   @Test
@@ -85,7 +90,6 @@ public class TablesControllerAjaxTest {
     String result = controller.getDisplayTextNullSafe(node);
     assertThat(result, is("English words / Spanish words"));
 
-    logger.info("Display Text: " + result);
   }
   
   @Test
@@ -99,7 +103,22 @@ public class TablesControllerAjaxTest {
 
     List<JsonNode> result = controller.getQuestionNodes(node);
 
-    logger.info("Display Text: " + result);
+    for (JsonNode resultNode : result) {
+      String name = resultNode.get("name").asText();
+      assertThat(name, not(isEmptyString()));
+      JsonNode display = resultNode.get("display");
+      assertThat(display, is(not(nullValue())));
+      JsonNode text = display.get("text");
+      assertThat(display, is(not(nullValue())));
+      // This particular example file has default and Spanish text
+      String spanish = text.get("spanish").asText();
+      assertThat(spanish, not(isEmptyString()));
+      String defaultText = text.get("default").asText();
+      assertThat(defaultText, not(isEmptyString()));
+
+      logger.info(name + ": " + defaultText + "/" + spanish);
+
+    }
   }
 
   @Test
@@ -113,7 +132,8 @@ public class TablesControllerAjaxTest {
 
     Map<String, SurveyQuestion> result = controller.getSurveyQuestionMap(node);
 
-    logger.info("Display Text: " + result);
+    assertThat(result.keySet(), containsInAnyOrder("Earners", "Salary", "WeeklySales", "Secondary", "FamilySize", "Unpaid", "WeeklyExpenses", "picture", "Area", "stable", "location", "Children", "credit", "Principal"));
+
   }
   
 }
