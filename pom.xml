@@ -57,18 +57,6 @@
 			<artifactId>odk-hamster-digest-auth-client</artifactId>
 			<version>1.0.3-SNAPSHOT</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.opendatakit</groupId> -->
-		<!-- <artifactId>odk-tables-api-hamster</artifactId> -->
-		<!-- <version>1.1</version> -->
-		<!-- <exclusions> -->
-		<!-- Spring boot includes jcl-over-slf4j (conflicts) by default -->
-		<!-- <exclusion> -->
-		<!-- <groupId>org.slf4j</groupId> -->
-		<!-- <artifactId>slf4j-jcl</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- </exclusions> -->
-		<!-- </dependency> -->
 		<!-- Compile -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

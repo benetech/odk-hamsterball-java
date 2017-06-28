@@ -354,12 +354,15 @@ public class OdkClient {
     String postUploadUrl = odkUrl.toExternalForm() + (FORM_UPLOAD_ENDPOINT
         .replace("{appId}", odkAppId).replace("{odkClientVersion}", odkClientVersion));
 
+    int sizeOf = 0;
     MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
-    
+
     for (String office : offices) {
+      logger.info("Office bytes: " + office.getBytes().length);
+      sizeOf += office.getBytes().length;
       parts.add(GeneralConsts.OFFICE_ID, office);
     }
-    
+
     parts.add(GeneralConsts.ZIP_FILE, new ByteArrayResource(file.getBytes()) {
       @Override
       public String getFilename() {
@@ -368,11 +371,18 @@ public class OdkClient {
       }
     });
 
+    logger.info("File bytes: " + file.getBytes().length);
+    sizeOf += file.getBytes().length;
+
+    logger.info("Size of all content: " + sizeOf);
+
     HttpHeaders header = new HttpHeaders();
     header.setContentType(MediaType.MULTIPART_FORM_DATA);
 
     HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(parts, header);
 
+    logger.info(
+        "Request entity Content Length header: " + requestEntity.getHeaders().getContentLength());
 
     ResponseEntity<FormUploadResult> entity =
         restTemplate.postForEntity(postUploadUrl, requestEntity, FormUploadResult.class);

@@ -28,12 +28,16 @@
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
 	</logger> 
-				<logger name="org.apache.http.impl.client" level="DEBUG"
+	<logger name="org.apache.http.impl.client" level="DEBUG"
 		additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
 	</logger> 
-
+	<logger name="org.springframework.web.client" level="DEBUG"
+		additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+	</logger> 
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />

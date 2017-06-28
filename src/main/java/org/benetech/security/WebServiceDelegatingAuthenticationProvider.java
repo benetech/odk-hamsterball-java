@@ -1,6 +1,5 @@
 package org.benetech.security;
 
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
