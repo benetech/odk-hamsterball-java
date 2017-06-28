@@ -125,7 +125,7 @@ public class HttpProxyUtils {
 
 		HttpComponentsClientHttpRequestFactoryDigestAuth requestFactory = (HttpComponentsClientHttpRequestFactoryDigestAuth) restTemplate
 				.getRequestFactory();
-
+		requestFactory.setBufferRequestBody(false);
 		return requestFactory.getHttpClient();
 	}
 
