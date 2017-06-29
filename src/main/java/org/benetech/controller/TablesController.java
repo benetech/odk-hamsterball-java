@@ -65,29 +65,7 @@ public class TablesController {
     model.addAttribute("tableId", tableId);
     return "attachments";
   }
-
-  @GetMapping("/tables/export/{tableId}")
-  public String exportForm(@PathVariable("tableId") String tableId, Model model) {
-    OdkClient odkClient = odkClientFactory.getOdkClient();
-    model.addAttribute("tableId", tableId);
-    return "export";
-  }
-
-  @RequestMapping("/tables/{tableId}/rows")
-  public String rows(@PathVariable("tableId") String tableId,
-      @RequestParam(name = "sortColumn", defaultValue = "_savepoint_timestamp",
-          required = false) String sortColumn,
-      @RequestParam(name = "ascending", defaultValue = "false", required = false) boolean ascending,
-      Model model) {
-
-    OdkClient odkClient = odkClientFactory.getOdkClient();
-
-    populateDefaultModel(tableId, sortColumn, ascending, model);
-    return "rows";
-  }
-
-
-
+  
   @PostMapping("/table/{tableId}/rows/delete")
   public String deleteRow(@PathVariable("tableId") String tableId,
       @RequestParam(name = "rowId") String rowId,
@@ -111,6 +89,30 @@ public class TablesController {
     model.addAttribute("css", "info");
     return "rows";
   }
+
+  @GetMapping("/tables/export/{tableId}")
+  public String exportForm(@PathVariable("tableId") String tableId, Model model) {
+    OdkClient odkClient = odkClientFactory.getOdkClient();
+    model.addAttribute("tableId", tableId);
+    return "export";
+  }
+
+  @RequestMapping("/tables/{tableId}/rows")
+  public String rows(@PathVariable("tableId") String tableId,
+      @RequestParam(name = "sortColumn", defaultValue = "_savepoint_timestamp",
+          required = false) String sortColumn,
+      @RequestParam(name = "ascending", defaultValue = "false", required = false) boolean ascending,
+      Model model) {
+
+    OdkClient odkClient = odkClientFactory.getOdkClient();
+
+    populateDefaultModel(tableId, sortColumn, ascending, model);
+    return "rows";
+  }
+
+
+
+
 
   private void populateDefaultModel(String tableId, String sortColumn, boolean ascending,
       Model model) {
