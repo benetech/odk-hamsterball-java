@@ -46,7 +46,7 @@ public class TablesController {
 
     model.addAttribute("manifest", manifest);
     model.addAttribute("tableId", tableId);
-    return "manifest";
+    return "odk_tables_manifest";
   }
 
   @RequestMapping("/tables/attachments/{tableId}")
@@ -63,7 +63,7 @@ public class TablesController {
     }
     model.addAttribute("manifest", manifestDisplayList);
     model.addAttribute("tableId", tableId);
-    return "attachments";
+    return "odk_tables_attachments";
   }
   
   @PostMapping("/tables/{tableId}/rows/delete")
@@ -87,14 +87,23 @@ public class TablesController {
     model.addAttribute("msg",
         "Row " + rowResource.getRowETag() + " has been deleted.");
     model.addAttribute("css", "info");
-    return "rows";
+    return "odk_tables_rows";
   }
 
-  @GetMapping("/tables/export/{tableId}")
-  public String exportForm(@PathVariable("tableId") String tableId, Model model) {
+  @GetMapping("/tables/properties/{tableId}")
+  public String properties(@PathVariable("tableId") String tableId, Model model) {
     OdkClient odkClient = odkClientFactory.getOdkClient();
     model.addAttribute("tableId", tableId);
-    return "export";
+    List<String> offices = odkClient.getTableOffices(tableId);
+    model.addAttribute("offices", offices);
+
+    return "odk_tables_properties";
+  }
+  
+  @GetMapping("/tables/export/{tableId}")
+  public String exportForm(@PathVariable("tableId") String tableId, Model model) {
+    model.addAttribute("tableId", tableId);
+    return "odk_tables_export";
   }
 
   @RequestMapping("/tables/{tableId}/rows")
@@ -107,7 +116,7 @@ public class TablesController {
     OdkClient odkClient = odkClientFactory.getOdkClient();
 
     populateDefaultModel(tableId, sortColumn, ascending, model);
-    return "rows";
+    return "odk_tables_rows";
   }
 
 
@@ -133,7 +142,7 @@ public class TablesController {
     OdkClient odkClient = odkClientFactory.getOdkClient();
     List<RegionalOffice> offices = odkClient.getOfficeList();
     model.addAttribute("offices", offices);
-    return "upload_form_template";
+    return "odk_tables_upload";
   }
 
   @PostMapping("/tables/upload")
@@ -156,7 +165,7 @@ public class TablesController {
 
     model.addAttribute("offices", menuOffices);
 
-    return "upload_form_template";
+    return "odk_tables_upload";
   }
 
 }

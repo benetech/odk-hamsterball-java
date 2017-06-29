@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{odk_tables_layout}">
+<th:block layout:fragment="title"
+	th:text="${tableId} + ' Properties'"></th:block>
+<body>
+	<th:block layout:fragment="odktablescontent">
+	<p>Office IDs:</p>
+	<ul th:each="office: ${offices}">
+	<li th:text="${office}" ></li>
+	</ul>
+	</th:block>
+</body>
+</html>

@@ -65,6 +65,8 @@ public class OdkClient {
       "/odktables/{appId}/tables/{tableId}/ref/{schemaETag}/attachments/{rowId}/manifest";
   public static String TABLE_ATTACHMENT_MANIFEST_ENDPOINT =
       "/odktables/{appId}/tables/{tableId}/ref/{schemaETag}/attachments/manifest";
+  public static String TABLE_OFFICES_ENDPOINT = "/odktables/{appId}/tables/{tableId}/offices";
+
 
   public static String TABLE_FILE_PROXY_ENDPOINT = "/odktables/{appId}/files/{odkClientVersion}";
   public static String TABLE_EXPORT_PROXY_ENDPOINT = "/odktables/{appId}";
@@ -245,6 +247,21 @@ public class OdkClient {
 
   }
 
+  
+  
+  public List<String> getTableOffices(String tableId) {
+
+    String getOfficesUrl = getUrl(TABLE_OFFICES_ENDPOINT).replace("{tableId}", tableId);
+    logger.debug("Calling " + getOfficesUrl);
+
+    ResponseEntity<List<String>> getResponse = restTemplate.exchange(getOfficesUrl,
+        HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {});
+    List<String> offices = getResponse.getBody();
+
+    return offices;
+
+  }
+  
   public OdkTablesFileManifest getTableAttachmentManifest(String tableId, String schemaETag) {
 
     String getManifestUrl = getUrl(TABLE_ATTACHMENT_MANIFEST_ENDPOINT).replace("{tableId}", tableId)
