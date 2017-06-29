@@ -66,7 +66,7 @@ public class TablesController {
     return "attachments";
   }
   
-  @PostMapping("/table/{tableId}/rows/delete")
+  @PostMapping("/tables/{tableId}/rows/delete")
   public String deleteRow(@PathVariable("tableId") String tableId,
       @RequestParam(name = "rowId") String rowId,
       @RequestParam(name = "sortColumn", defaultValue = "_savepoint_timestamp",
