@@ -52,6 +52,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * "Broken pipe" errors using the RestTemplate to upload files larger than about 2 MB, and
  * HttpClient allows us more leeway in adjusting configuration options.
  * 
+ * The most notable difference from OdkClient that we are doing pre-emptive digest 
+ * authentication, using an empty post to get the www-auth challenge header instead of the post 
+ * containing the form.  Then we use that header to create the credentials to upload the form.
+ * 
  * @author Caden Howell <cadenh@benetech.org>
  *
  */
@@ -67,40 +71,42 @@ public class OdkUploadClient {
 
   private static final Pattern NONCE_PATTERN =
       Pattern.compile(NONCE_REGEX, Pattern.CASE_INSENSITIVE);
+  
+  private OdkClient odkClient;
 
+  public OdkUploadClient(OdkClient odkClient) {
+    this.odkClient = odkClient;
+  }
 
   /**
-   * Upload multipart form containing a new survey to web service. For this one endpoint, we are
-   * preempting digest authentication by using a HEAD call to get the www-authentication header.
+   * Upload multipart form containing a new survey to web service. For this endpoint, we are
+   * preempting digest authentication by using an empty POST call to get the www-authentication header.
    * 
    * @param file
    * @param offices
    * @return
    * @throws IOException
-   * 
    */
-  public static FormUploadResult uploadFile(OdkClient odkClient, MultipartFile file,
-      List<String> offices) throws IOException {
-    
-
+  public FormUploadResult uploadFile(final MultipartFile file,
+      final List<String> offices) throws IOException {
 
     FormUploadResult formUploadResult = null;
 
-    String postUploadEndpoint = odkClient.getUrl(FORM_UPLOAD_ENDPOINT);
-    URL postUploadUrl = new URL(postUploadEndpoint);
-    HttpHost target =
+    final String postUploadEndpoint = odkClient.getUrl(FORM_UPLOAD_ENDPOINT);
+    final URL postUploadUrl = new URL(postUploadEndpoint);
+    final HttpHost target =
         new HttpHost(postUploadUrl.getHost(), postUploadUrl.getPort(), postUploadUrl.getProtocol());
 
-    CloseableHttpClient preemptiveClient = getPreemptiveClient(postUploadUrl);
-    HttpClientContext clientContext = getPreemptiveContext(odkClient, target, postUploadEndpoint);
+    final CloseableHttpClient preemptiveClient = getPreemptiveClient(postUploadUrl);
+    final HttpClientContext clientContext = getPreemptiveContext(target, postUploadEndpoint);
 
-    HttpEntity requestEntity = buildRequestEntity(offices, file);
+    final HttpEntity requestEntity = buildRequestEntity(offices, file);
 
-    HttpPost httpPost = new HttpPost(postUploadEndpoint);
+    final HttpPost httpPost = new HttpPost(postUploadEndpoint);
     httpPost.setEntity(requestEntity);
     try {
-      CloseableHttpResponse response = preemptiveClient.execute(target, httpPost, clientContext);
-      HttpEntity responseEntity = response.getEntity();
+      final CloseableHttpResponse response = preemptiveClient.execute(target, httpPost, clientContext);
+      final HttpEntity responseEntity = response.getEntity();
       formUploadResult = mapper.readValue(responseEntity.getContent(), FormUploadResult.class);
       EntityUtils.consume(responseEntity);
     } finally {
@@ -118,19 +124,18 @@ public class OdkUploadClient {
    * @throws IOException
    * @see http://hc.apache.org/httpcomponents-client-4.3.x/httpmime/examples/org/apache/http/examples/entity/mime/ClientMultipartFormPost.java
    */
-  static HttpEntity buildRequestEntity(List<String> offices, MultipartFile file)
+  private static HttpEntity buildRequestEntity(final List<String> offices, final MultipartFile file)
       throws IOException {
-    MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+    final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
-    for (String office : offices) {
+    for (final String office : offices) {
       builder.addTextBody(GeneralConsts.OFFICE_ID, office, ContentType.TEXT_PLAIN);
     }
 
     builder.addBinaryBody(GeneralConsts.ZIP_FILE, file.getBytes(),
         ContentType.create("application/zip"), file.getOriginalFilename());
-    HttpEntity requestEntity = builder.build();
+    final HttpEntity requestEntity = builder.build();
     return requestEntity;
-
   }
 
   /**
@@ -139,10 +144,11 @@ public class OdkUploadClient {
    * @param postUploadUrl
    * @return
    */
-  static CloseableHttpClient getPreemptiveClient(URL postUploadUrl) {
+  private static CloseableHttpClient getPreemptiveClient(final URL postUploadUrl) {
 
-    SecurityContext securityContext = SecurityContextHolder.getContext();
-    Map<String, Object> userDetails = (Map<String, Object>) securityContext.getAuthentication().getDetails();
+    final SecurityContext securityContext = SecurityContextHolder.getContext();
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> userDetails = (Map<String, Object>) securityContext.getAuthentication().getDetails();
     
     if (userDetails == null || userDetails.get(GeneralConsts.PREEMPTIVE_CREDENTIALS) == null) {
       SecurityUtils.logout();
@@ -150,15 +156,15 @@ public class OdkUploadClient {
       throw new PreAuthenticatedCredentialsNotFoundException("Cannot find credentials needed for file download.  Please logout and log in again.");
     } 
 
-    UsernamePasswordCredentials preemptiveCredentials = (UsernamePasswordCredentials)userDetails.get(GeneralConsts.PREEMPTIVE_CREDENTIALS);
+    final UsernamePasswordCredentials preemptiveCredentials = (UsernamePasswordCredentials)userDetails.get(GeneralConsts.PREEMPTIVE_CREDENTIALS);
 
-    CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+    final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
     credentialsProvider.setCredentials(
         new AuthScope(postUploadUrl.getHost(), postUploadUrl.getPort()),
         preemptiveCredentials);
 
-    CloseableHttpClient preemptiveClient =
+    final CloseableHttpClient preemptiveClient =
         HttpClients.custom().setDefaultCredentialsProvider(credentialsProvider).build();
 
     return preemptiveClient;
@@ -171,30 +177,21 @@ public class OdkUploadClient {
    * @return
    * @see https://hc.apache.org/httpcomponents-client-ga/httpclient/examples/org/apache/http/examples/client/ClientPreemptiveDigestAuthentication.java
    */
-  static HttpClientContext getPreemptiveContext(OdkClient odkClient, HttpHost target,
+  private HttpClientContext getPreemptiveContext(HttpHost target,
       String postUploadEndpoint) throws ClientProtocolException, IOException {
 
-    String nonce = getNonce(target, postUploadEndpoint);
-
-    // Create AuthCache instance
-    AuthCache authCache = new BasicAuthCache();
-    // Generate DIGEST scheme object, initialize it and add it to the local
-    // auth cache
-    DigestScheme digestAuth = new DigestScheme();
-    // Suppose we already know the realm name
+    final String nonce = getNonce(target, postUploadEndpoint);
+    
+    final AuthCache authCache = new BasicAuthCache();
+    final DigestScheme digestAuth = new DigestScheme();
     digestAuth.overrideParamter("realm", odkClient.getOdkRealm());
-    // Suppose we already know the expected nonce value
     digestAuth.overrideParamter("nonce", nonce);
     authCache.put(target, digestAuth);
-
-
-
-    // Add AuthCache to the execution context
-    HttpClientContext localContext = HttpClientContext.create();
+    
+    final HttpClientContext localContext = HttpClientContext.create();
     localContext.setAuthCache(authCache);
-
-    logger.info("Setting request config to expect continue enabled");
-    RequestConfig config = RequestConfig.custom().setExpectContinueEnabled(true).build();
+    
+    final RequestConfig config = RequestConfig.custom().setExpectContinueEnabled(true).build();
     localContext.setRequestConfig(config);
 
     return localContext;
@@ -210,16 +207,16 @@ public class OdkUploadClient {
    * @throws IOException
    * @throws URISyntaxException
    */
-  static String getNonce(HttpHost target, String postUri)
+  private static String getNonce(final HttpHost target, final String postUri)
       throws ClientProtocolException, IOException {
 
-    CloseableHttpClient httpClient = HttpClients.custom().build();
+    final CloseableHttpClient httpClient = HttpClients.custom().build();
     Header header = null;
 
-    HttpPost httpPost;
+    final HttpPost httpPost;
     try {
       httpPost = new HttpPost(new URI(postUri));
-      HttpResponse headResponse = httpClient.execute(target, httpPost);
+      final HttpResponse headResponse = httpClient.execute(target, httpPost);
       header = headResponse.getFirstHeader(AUTH.WWW_AUTH);
 
     } catch (URISyntaxException e) {
@@ -230,7 +227,7 @@ public class OdkUploadClient {
 
   static String parseNonce(String header) {
     String nonce = null;
-    Matcher matcher = NONCE_PATTERN.matcher(header);
+    final Matcher matcher = NONCE_PATTERN.matcher(header);
     if (matcher.matches()) {
       nonce = matcher.group(1);
     }

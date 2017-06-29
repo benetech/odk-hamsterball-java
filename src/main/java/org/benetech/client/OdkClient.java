@@ -401,7 +401,8 @@ public class OdkClient {
   
   public FormUploadResult uploadFile(MultipartFile file, List<String> offices) throws IOException
   {
-    return OdkUploadClient.uploadFile(this, file, offices);
+    OdkUploadClient odkUploadClient = new OdkUploadClient(this);
+    return odkUploadClient.uploadFile(file, offices);
   }
   
 
