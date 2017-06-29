@@ -18,19 +18,22 @@
 				<span aria-hidden="true">×</span>
 			</button>
 			<strong th:text="${msg}"></strong>
-			<p
-				th:if="${result != null and result.manifest != null and result.manifest.files != null }">Files
+			<th:block th:if="${result != null and result.manifest != null and result.manifest.files != null }">
+			<p>Files
 				uploaded:
 			<ul th:each="file: ${result.manifest.files}">
 				<li th:text="${file.filename}">File</li>
 			</ul>
 			</p>
+			</th:block>
+			<th:block th:if="${result != null and result.notProcessedFiles != null}">
 			<p th:if="${result != null and result.notProcessedFiles != null}">Files
 				not uploaded
 			<ul th:each="filename: ${result.notProcessedFiles}">
 				<li th:text="${filename}">File</li>
 			</ul>
 			</p>
+			</th:block>
 		</div>
 
 		<form th:action="@{/tables/upload}" method="post"

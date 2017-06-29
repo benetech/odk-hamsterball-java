@@ -25,7 +25,7 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
   @Autowired
   private OdkClientFactory odkClientFactory;
 
-  private static final Log logger = LogFactory.getLog(HandlerInterceptorAdapter.class);
+  private static final Log logger = LogFactory.getLog(MenuInterceptor.class);
 
   @Override
   public void postHandle(final HttpServletRequest request, final HttpServletResponse response,

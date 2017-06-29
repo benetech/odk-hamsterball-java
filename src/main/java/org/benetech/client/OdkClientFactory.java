@@ -23,11 +23,12 @@ public class OdkClientFactory {
     String odkUrlString = webServicesProperties.getProperty("odk.url");
     String odkAppId = webServicesProperties.getProperty("odk.app.id");
     String odkClientVersion = webServicesProperties.getProperty("odk.client.version");
+    String odkRealm = webServicesProperties.getProperty("odk.realm");
     
     logger.debug("Setting odk.url to " + odkUrlString);
     logger.debug("Setting odk.app.id to " + odkAppId);
     logger.debug("Setting odk.client.version to " + odkClientVersion);
-
+    logger.debug("Setting odk.realm " + odkRealm);
 
     URL odkUrl = null;
     if (odkUrlString == null) {
@@ -41,7 +42,7 @@ public class OdkClientFactory {
           "Bad host syntax.  Did you configure the web service host?");
     }
 
-    return new OdkClient(OdkClientUtils.getRestTemplate(), odkUrl, odkAppId, odkClientVersion);
+    return new OdkClient(OdkClientUtils.getRestTemplate(), odkUrl, odkAppId, odkClientVersion, odkRealm);
   }
 
 

@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.benetech.client.OdkClient;
 import org.benetech.constants.GeneralConsts;
 import org.benetech.security.client.digest.DigestRestTemplateFactory;
@@ -81,8 +82,16 @@ public class WebServiceDelegatingAuthenticationProvider implements Authenticatio
         throw new AuthenticationServiceException(e.getMessage());
       }
     }
-
+    
     userDetails.put(GeneralConsts.ODK_REST_CLIENT, restTemplate);
+    
+    // Cached credentials for file upload form / pre-emptive digest authentication
+    UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials(username,
+        password);
+    
+    userDetails.put(GeneralConsts.PREEMPTIVE_CREDENTIALS, usernamePasswordCredentials);
+
+    
 
     if (getResponse.getStatusCode().equals(HttpStatus.OK)) {
       Set<GrantedAuthority> authorized = new HashSet<GrantedAuthority>();

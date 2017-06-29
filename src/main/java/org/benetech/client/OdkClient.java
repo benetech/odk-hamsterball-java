@@ -76,13 +76,19 @@ public class OdkClient {
   private URL odkUrl;
   private String odkAppId;
   private String odkClientVersion;
+  private String odkRealm;
 
   public OdkClient(RestTemplate restTemplate, URL odkUrl, String odkAppId,
-      String odkClientVersion) {
+      String odkClientVersion, String odkRealm) {
     this.restTemplate = restTemplate;
     this.odkUrl = odkUrl;
     this.odkAppId = odkAppId;
     this.odkClientVersion = odkClientVersion;
+    this.odkRealm = odkRealm;
+  }
+  
+  public String getOdkRealm() {
+    return odkRealm;
   }
 
   public String getFileProxyEndpoint() {
@@ -395,7 +401,7 @@ public class OdkClient {
   
   public FormUploadResult uploadFile(MultipartFile file, List<String> offices) throws IOException
   {
-    return OdkUploadClient.uploadFile(this, restTemplate, file, offices);
+    return OdkUploadClient.uploadFile(this, file, offices);
   }
   
 

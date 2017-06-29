@@ -8,9 +8,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.benetech.client.OdkClient;
 import org.benetech.constants.GeneralConsts;
+import org.benetech.security.SecurityUtils;
 import org.opendatakit.api.offices.entity.RegionalOffice;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedCredentialsNotFoundException;
 import org.springframework.web.client.RestTemplate;
 
 public class OdkClientUtils {
@@ -24,6 +26,9 @@ public class OdkClientUtils {
 
       if (userDetails == null || userDetails.get(GeneralConsts.ODK_REST_CLIENT) == null) {
         // TODO: Get reauthenticated. Easy workaround may be to force logout for now.
+        SecurityUtils.logout();
+        throw new PreAuthenticatedCredentialsNotFoundException("Cannot find.  Please logout and log in again.");
+
       } else {
         restTemplate = (RestTemplate) userDetails.get(GeneralConsts.ODK_REST_CLIENT);
       }

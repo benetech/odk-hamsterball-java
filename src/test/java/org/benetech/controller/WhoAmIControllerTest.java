@@ -72,7 +72,7 @@ public class WhoAmIControllerTest {
     // Setup data + environment
     RestTemplate restTemplate = new RestTemplate();
     MockRestServiceServer mockServer = MockRestServiceServer.createServer(restTemplate);
-    OdkClient mockOdkClient = new OdkClient(restTemplate, new URL(BOGUS_ROOT_URL), "default", "2");
+    OdkClient mockOdkClient = new OdkClient(restTemplate, new URL(BOGUS_ROOT_URL), "default", "2", "bogus realm");
     when(odkClientFactory.getOdkClient()).thenReturn(mockOdkClient);
     mockServer.expect(times(2), requestTo(BOGUS_ROOT_URL + "/users/current"))
         .andExpect(method(HttpMethod.GET))
