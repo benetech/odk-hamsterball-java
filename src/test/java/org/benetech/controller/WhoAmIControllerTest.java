@@ -12,16 +12,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.benetech.client.OdkClient;
 import org.benetech.client.OdkClientFactory;
 import org.benetech.configuration.MvcConfiguration;
 import org.benetech.configuration.SecurityConfiguration;
 import org.benetech.configuration.WebClientConfiguration;
+import org.benetech.constants.GeneralConsts;
 import org.benetech.interceptor.MenuInterceptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,7 +58,12 @@ public class WhoAmIControllerTest {
   Log logger = LogFactory.getLog(WhoAmIControllerTest.class);
 
   private static final String BOGUS_ROOT_URL = "http://hamster.tech";
+  
+  private RestTemplate restTemplate;
 
+  @Autowired
+  Properties webServicesProperties;
+  
   /**
    * To use the autowired default form of MockMvc, we cannot use interceptors. This means that we
    * cannot use the MenuInterceptor, and the "currentUser" variable is not set in the top menu.
@@ -68,11 +78,12 @@ public class WhoAmIControllerTest {
   public void whoAmIPage() throws Exception {
 
     logger.info("Starting whoAmIPage test");
+    String odkRealm = webServicesProperties.getProperty("odk.realm");
 
     // Setup data + environment
-    RestTemplate restTemplate = new RestTemplate();
+    restTemplate = new RestTemplate();
     MockRestServiceServer mockServer = MockRestServiceServer.createServer(restTemplate);
-    OdkClient mockOdkClient = new OdkClient(restTemplate, new URL(BOGUS_ROOT_URL), "default", "2", "bogus realm");
+    OdkClient mockOdkClient = new OdkClient(restTemplate, new URL(BOGUS_ROOT_URL), "default", "2", odkRealm);
     when(odkClientFactory.getOdkClient()).thenReturn(mockOdkClient);
     mockServer.expect(times(2), requestTo(BOGUS_ROOT_URL + "/users/current"))
         .andExpect(method(HttpMethod.GET))
@@ -114,6 +125,15 @@ public class WhoAmIControllerTest {
     UsernamePasswordAuthenticationToken token =
         new UsernamePasswordAuthenticationToken("javier", "password", authorized);
     securityContext.setAuthentication(token);
+    
+    Map<String, Object> userDetails = new HashMap<String, Object>();
+    userDetails.put(GeneralConsts.ODK_REST_CLIENT, restTemplate);
+    // Cached credentials for file upload form / pre-emptive digest authentication
+    UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials("javier",
+        "password");
+    userDetails.put(GeneralConsts.PREEMPTIVE_CREDENTIALS, usernamePasswordCredentials);
+    token.setDetails(userDetails);
+
     return securityContext;
   }
 

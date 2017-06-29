@@ -79,7 +79,7 @@ public class SmokeIT {
 
   private static final String WEB_SERVICE_PORT = "11223";
   private static final String WEB_CLIENT_PORT = "22334";
-  private static final String WEB_SERVICE_VERSION = "1.0-SNAPSHOT";
+  private static final String WEB_SERVICE_VERSION = "1.0.1-SNAPSHOT";
   private static final String WEB_CLIENT_VERSION = "1.0.0-SNAPSHOT";
   private static final String DEFAULT_ADMIN_USERNAME = "admin";
   private static final String DEFAULT_ADMIN_PASSWORD = "aggregate";
@@ -94,7 +94,7 @@ public class SmokeIT {
   @Test
   public void smokeTest() throws IOException {
     if (environmentReady) {
-      webDriver.get("http://localhost:22334");
+      webDriver.get("http://localhost:" + WEB_CLIENT_PORT);
       WebElement usernameInput = webDriver.findElement(By.name("username"));
       usernameInput.sendKeys(DEFAULT_ADMIN_USERNAME);
       WebElement passwordInput = webDriver.findElement(By.name("password"));
